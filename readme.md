@@ -2,8 +2,12 @@
 
 ## Requirement:
 - Install Python3
+- Install Virtual Environment (VENV)
+    * py -3 -m venv .venv
+    * .venv\Scripts\activate
 - Install PIP
 - Install dependencies:
+    * pip install setuptools
     * $ pip install flask
     * $ pip install pandas
     * $ pip install numpy
@@ -12,4 +16,7 @@
 
 - Check if installed correctly:
     * $ pip list
+
+- Run App
+    * flask --app hello run
 
