@@ -4,38 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifica/Elimina RDA</title>
+            <!-- Bootstrap CSS -->
+            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         body {
             background-color: grey;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-        .button {
-            background-color: red;
-            color: white;
-            padding: 10px 20px;
-            margin: 10px 0;
-            border: none;
-            cursor: pointer;
         }
         .info-box {
             background-color: lightgreen;
@@ -44,21 +18,22 @@
             margin-top: 20px;
         }
     </style>
+ 
 </head>
 <body>
-    <div class="container">
+    <div class="container my-5 p-4 bg-white rounded text-center">
         <h2>FORM MODIFICA RDA</h2>
         <p>INSERIRE N° RDA PER MODIFICARE I DATI AL SUO INTERNO:</p>
         <form action="#">
             <div class="form-group">
                 <label for="rda_number">Numero RDA</label>
-                <input type="text" id="rda_number" name="rda_number" required>
+                <input type="text" class="form-control" id="rda_number" name="rda_number" required>
             </div>
-            <button type="submit" class="button">Modifica RDA</button>
+            <button type="submit" class="btn btn-danger">Modifica RDA</button>
         </form>
         <div class="info-box">
             INFORMAZIONI DELLA RDA APPENA SCRITTA:
-            <ul>
+            <ul class="list-unstyled">
                 <li>SIA CAMPI GIÀ COMPILATI IN PRECEDENZA</li>
                 <li>SIA CAMPI DA POPOLARE</li>
             </ul>
@@ -67,14 +42,14 @@
         <form action="#">
             <div class="form-group">
                 <label for="delete_rda_number">Numero RDA</label>
-                <input type="text" id="delete_rda_number" name="delete_rda_number" required>
+                <input type="text" class="form-control" id="delete_rda_number" name="delete_rda_number" required>
             </div>
-            <button type="button" class="button" onclick="confirmDelete()">Elimina RDA</button>
+            <button type="button" class="btn btn-danger" onclick="confirmDelete()">Elimina RDA</button>
         </form>
-        <div id="confirm-box" class="info-box" style="background-color: red; color: white; display: none;">
+        <div id="confirm-box" class="info-box bg-danger text-white" style="display: none;">
             SEI SICURO DI VOLER ELIMINARE? SI/NO
-            <button class="button" onclick="deleteRDA()">SI</button>
-            <button class="button" onclick="hideConfirm()">NO</button>
+            <button class="btn btn-light" onclick="deleteRDA()">SI</button>
+            <button class="btn btn-light" onclick="hideConfirm()">NO</button>
         </div>
     </div>
     <script>
@@ -89,5 +64,10 @@
             alert('RDA eliminata!');
         }
     </script>
+
+            <!-- Bootstrap JS and dependencies -->
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -4,86 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inserisci nuova rdA</title>
+            <!-- Bootstrap CSS -->
+            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background-color: grey;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-        .button {
-            background-color: red;
-            color: white;
-            padding: 10px 20px;
-            margin: 10px 0;
-            border: none;
-            cursor: pointer;
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
+    <div class="container my-5 p-4 bg-white rounded">
         <h2>Form per inserire tutti i campi del DB SHOPPING CART</h2>
-        <form action="#">
+        <form action="/insert" method="POST">
             <div class="form-group">
                 <label for="rda">RDA (NN)</label>
-                <input type="text" id="rda" name="rda" required>
+                <input type="text" class="form-control" id="rda" name="rda" required>
             </div>
             <div class="form-group">
                 <label for="basket_name">BASKET NAME (NN)</label>
-                <input type="text" id="basket_name" name="basket_name" required>
+                <input type="text" class="form-control" id="basket_name" name="basket_name" required>
             </div>
             <div class="form-group">
                 <label for="fornitore">FORNITORE (NN)</label>
-                <input type="text" id="fornitore" name="fornitore" required>
+                <input type="text" class="form-control" id="fornitore" name="fornitore" required>
             </div>
             <div class="form-group">
                 <label for="valore_shopping_cart">VALORE SHOPPING CART</label>
-                <input type="text" id="valore_shopping_cart" name="valore_shopping_cart">
+                <input type="text" class="form-control" id="valore_shopping_cart" name="valore_shopping_cart">
             </div>
             <div class="form-group">
                 <label for="oda">ODA</label>
-                <input type="text" id="oda" name="oda">
+                <input type="text" class="form-control" id="oda" name="oda">
             </div>
             <div class="form-group">
                 <label for="commessa">COMMESSA (NN)</label>
-                <input type="text" id="commessa" name="commessa" required>
+                <input type="text" class="form-control" id="commessa" name="commessa" required>
             </div>
             <div class="form-group">
                 <label for="element">ELEMENT (NN)</label>
-                <input type="text" id="element" name="element" required>
+                <input type="text" class="form-control" id="element" name="element" required>
             </div>
             <div class="form-group">
                 <label for="richiedente">RICHIEDENTE (NN)</label>
-                <input type="text" id="richiedente" name="richiedente" required>
+                <input type="text" class="form-control" id="richiedente" name="richiedente" required>
             </div>
             <div class="form-group">
                 <label for="data_creazione">DATA CREAZIONE (NN)</label>
-                <input type="date" id="data_creazione" name="data_creazione" required>
+                <input type="date" class="form-control" id="data_creazione" name="data_creazione" required>
             </div>
             <div class="form-group">
                 <label for="tipologia_acquisto">TIPOLOGIA ACQUISTO (NN)</label>
-                <input type="text" id="tipologia_acquisto" name="tipologia_acquisto" required>
+                <input type="text" class="form-control" id="tipologia_acquisto" name="tipologia_acquisto" required>
             </div>
-            <button type="submit" class="button">Submit</button>
+            <button type="submit" class="btn btn-danger">Submit</button>
         </form>
     </div>
+    
+            <!-- Bootstrap JS and dependencies -->
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

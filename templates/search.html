@@ -4,39 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search</title>
+            <!-- Bootstrap CSS -->
+            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    
     <style>
         body {
             background-color: grey;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-group select,
-        .form-group input {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-        .button {
-            background-color: blue;
-            color: white;
-            padding: 10px 20px;
-            margin: 10px 0;
-            border: none;
-            cursor: pointer;
         }
         .result {
             background-color: limegreen;
@@ -45,26 +18,33 @@
             margin-top: 20px;
         }
     </style>
+
 </head>
 <body>
-    <div class="container">
+
+    <div class="container my-5 p-4 bg-white rounded text-center">
         <h2>Search</h2>
         <form action="#">
             <div class="form-group">
-                <button type="submit" class="button">Cerca</button>
+                <button type="submit" class="btn btn-primary">Cerca</button>
             </div>
             <div class="form-group">
-                <button type="button" class="button">Filtra per</button>
-                <select name="category" id="category">
+                <button type="button" class="btn btn-secondary">Filtra per</button>
+                <select name="category" id="category" class="form-control mt-2">
                     <option value="">Seleziona Categoria</option>
                     <!-- Add more categories as needed -->
                 </select>
-                <input type="text" name="value" id="value" placeholder="Valore da inserire">
+                <input type="text" name="value" id="value" class="form-control mt-2" placeholder="Valore da inserire">
             </div>
         </form>
         <div class="result">
             RESTITUZIONE FILTRO RICHIESTO
         </div>
     </div>
+
+            <!-- Bootstrap JS and dependencies -->
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

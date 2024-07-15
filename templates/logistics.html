@@ -4,86 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inserisci informazioni logistiche</title>
+            <!-- Bootstrap CSS -->
+            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    
     <style>
         body {
             background-color: grey;
-            font-family: Arial, sans-serif;
         }
-        .container {
-            width: 80%;
-            margin: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-        .button {
-            background-color: red;
-            color: white;
-            padding: 10px 20px;
-            margin: 10px 0;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
+    </style> 
 </head>
+
 <body>
-    <div class="container">
+    <div class="container my-5 p-4 bg-white rounded">
         <h2>Form per inserire tutti i campi logistici del DB acquisti</h2>
         <form action="#">
             <div class="form-group">
                 <label for="costo_unitario">COSTO UNITARIO (NN)</label>
-                <input type="text" id="costo_unitario" name="costo_unitario" required>
+                <input type="text" class="form-control" id="costo_unitario" name="costo_unitario" required>
             </div>
             <div class="form-group">
                 <label for="quantita">QUANTITA (NN)</label>
-                <input type="text" id="quantita" name="quantita" required>
+                <input type="text" class="form-control" id="quantita" name="quantita" required>
             </div>
             <div class="form-group">
                 <label for="ubicazione">UBICAZIONE (NN)</label>
-                <input type="text" id="ubicazione" name="ubicazione" required>
+                <input type="text" class="form-control" id="ubicazione" name="ubicazione" required>
             </div>
             <div class="form-group">
                 <label for="id_mobile">ID MOBILE</label>
-                <input type="text" id="id_mobile" name="id_mobile">
+                <input type="text" class="form-control" id="id_mobile" name="id_mobile">
             </div>
             <div class="form-group">
                 <label for="descrizione">DESCRIZIONE</label>
-                <input type="text" id="descrizione" name="descrizione">
+                <input type="text" class="form-control" id="descrizione" name="descrizione">
             </div>
             <div class="form-group">
                 <label for="locale">LOCALE (NN)</label>
-                <input type="text" id="locale" name="locale" required>
+                <input type="text" class="form-control" id="locale" name="locale" required>
             </div>
             <div class="form-group">
                 <label for="ddt">DDT</label>
-                <input type="text" id="ddt" name="ddt">
+                <input type="text" class="form-control" id="ddt" name="ddt">
             </div>
             <div class="form-group">
                 <label for="data_ordine">DATA ORDINE</label>
-                <input type="date" id="data_ordine" name="data_ordine">
+                <input type="date" class="form-control" id="data_ordine" name="data_ordine">
             </div>
             <div class="form-group">
                 <label for="arrivato">ARRIVATO (NN)</label>
-                <input type="text" id="arrivato" name="arrivato" required>
+                <input type="text" class="form-control" id="arrivato" name="arrivato" required>
             </div>
             <div class="form-group">
                 <label for="data_arrivo_ordine">DATA ARRIVO ORDINE</label>
-                <input type="date" id="data_arrivo_ordine" name="data_arrivo_ordine">
+                <input type="date" class="form-control" id="data_arrivo_ordine" name="data_arrivo_ordine">
             </div>
-            <button type="submit" class="button">Submit</button>
+            <button type="submit" class="btn btn-danger">Submit</button>
         </form>
     </div>
+
+            <!-- Bootstrap JS and dependencies -->
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

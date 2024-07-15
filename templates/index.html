@@ -4,29 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    
     <style>
         body {
             background-color: grey;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-            text-align: center;
-        }
-        .button {
-            background-color: red;
-            color: white;
-            padding: 10px 20px;
-            margin: 10px;
-            border: none;
-            cursor: pointer;
-        }
-        .button.large {
-            width: 300px;
-        }
-        .button.small {
-            width: 100px;
         }
         .dashboard {
             background-color: green;
@@ -35,6 +18,7 @@
             margin-top: 20px;
         }
     </style>
+
     <script>
         function navigateToInsert() {
             window.location.href = '/insert';
@@ -50,23 +34,28 @@
         }
     </script>
 </head>
+
 <body>
-    <div class="container">
-        <div>
-            <button class="button large" onclick="navigateToModify()">MODIFICA/ELIMINA RDA</button>
+    <div class="container text-center my-5">
+        <div class="mb-3">
+            <button class="btn btn-danger btn-lg btn-block" onclick="navigateToModify()">MODIFICA/ELIMINA RDA</button>
         </div>
-        <div>
-            <button class="button small" onclick="navigateToInsert()">Inserisci nuova rdA</button>
-            <button class="button small" onclick="navigateToLogistics()">Informazioni Logistiche</button>
-            <button class="button large">Cerca 'RAPIDO' RDA/ODA/PART NUMBER</button>
-            <button class="button small" onclick="navigateToSearch()">Cerca</button>
+        <div class="d-flex justify-content-around flex-wrap">
+            <button class="btn btn-danger mb-2" style="width: 150px;" onclick="navigateToInsert()">Inserisci nuova rdA</button>
+            <button class="btn btn-danger mb-2" style="width: 150px;" onclick="navigateToLogistics()">Informazioni Logistiche</button>
+            <button class="btn btn-danger btn-lg mb-2" style="width: 300px;">Cerca 'RAPIDO' RDA/ODA/PART NUMBER</button>
+            <button class="btn btn-danger mb-2" style="width: 150px;" onclick="navigateToSearch()">Cerca</button>
         </div>
-        <div>
-            <button class="button" style="width: 80%;">Cerca 'RAPIDO' ---> INFORMAZIONI</button>
+        <div class="mb-3">
+            <button class="btn btn-danger btn-block" style="width: 80%;">Cerca 'RAPIDO' ---> INFORMAZIONI</button>
         </div>
         <div class="dashboard">
             Dashboard
         </div>
     </div>
+        <!-- Bootstrap JS and dependencies -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
