@@ -4,67 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inserisci informazioni logistiche</title>
-            <!-- Bootstrap CSS -->
-            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background-color: grey;
         }
-    </style> 
+    </style>
 </head>
-
 <body>
-    <div class="container my-5 p-4 bg-white rounded">
-        <h2>Form per inserire tutti i campi logistici del DB acquisti</h2>
-        <form action="#">
-            <div class="form-group">
-                <label for="costo_unitario">COSTO UNITARIO (NN)</label>
-                <input type="text" class="form-control" id="costo_unitario" name="costo_unitario" required>
-            </div>
-            <div class="form-group">
-                <label for="quantita">QUANTITA (NN)</label>
-                <input type="text" class="form-control" id="quantita" name="quantita" required>
-            </div>
-            <div class="form-group">
-                <label for="ubicazione">UBICAZIONE (NN)</label>
-                <input type="text" class="form-control" id="ubicazione" name="ubicazione" required>
-            </div>
-            <div class="form-group">
-                <label for="id_mobile">ID MOBILE</label>
-                <input type="text" class="form-control" id="id_mobile" name="id_mobile">
-            </div>
-            <div class="form-group">
-                <label for="descrizione">DESCRIZIONE</label>
-                <input type="text" class="form-control" id="descrizione" name="descrizione">
-            </div>
-            <div class="form-group">
-                <label for="locale">LOCALE (NN)</label>
-                <input type="text" class="form-control" id="locale" name="locale" required>
-            </div>
-            <div class="form-group">
-                <label for="ddt">DDT</label>
-                <input type="text" class="form-control" id="ddt" name="ddt">
-            </div>
-            <div class="form-group">
-                <label for="data_ordine">DATA ORDINE</label>
-                <input type="date" class="form-control" id="data_ordine" name="data_ordine">
-            </div>
-            <div class="form-group">
-                <label for="arrivato">ARRIVATO (NN)</label>
-                <input type="text" class="form-control" id="arrivato" name="arrivato" required>
-            </div>
-            <div class="form-group">
-                <label for="data_arrivo_ordine">DATA ARRIVO ORDINE</label>
-                <input type="date" class="form-control" id="data_arrivo_ordine" name="data_arrivo_ordine">
-            </div>
-            <button type="submit" class="btn btn-danger">Submit</button>
-        </form>
+    <div class="container my-5">
+        <div class="card p-4">
+            <h2 class="card-title">Form per inserire tutti i campi logistici del DB acquisti</h2>
+            <form action="#">
+                <div class="form-group">
+                    <label for="costo_unitario">COSTO UNITARIO (NN)</label>
+                    <input type="text" class="form-control" id="costo_unitario" name="costo_unitario" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantita">QUANTITA (NN)</label>
+                    <input type="text" class="form-control" id="quantita" name="quantita" required>
+                </div>
+                <div class="form-group">
+                    <label for="ubicazione">UBICAZIONE (NN)</label>
+                    <input type="text" class="form-control" id="ubicazione" name="ubicazione" required>
+                </div>
+                <div class="form-group">
+                    <label for="id_mobile">ID MOBILE</label>
+                    <input type="text" class="form-control" id="id_mobile" name="id_mobile">
+                </div>
+                <div class="form-group">
+                    <label for="descrizione">DESCRIZIONE</label>
+                    <input type="text" class="form-control" id="descrizione" name="descrizione">
+                </div>
+                <div class="form-group">
+                    <label for="locale">LOCALE (NN)</label>
+                    <input type="text" class="form-control" id="locale" name="locale" required>
+                </div>
+                <div class="form-group">
+                    <label for="ddt">DDT</label>
+                    <input type="text" class="form-control" id="ddt" name="ddt">
+                </div>
+                <div class="form-group">
+                    <label for="data_ordine">DATA ORDINE</label>
+                    <input type="date" class="form-control" id="data_ordine" name="data_ordine">
+                </div>
+                <div class="form-group">
+                    <label for="arrivato">ARRIVATO (NN)</label>
+                    <input type="text" class="form-control" id="arrivato" name="arrivato" required>
+                </div>
+                <div class="form-group">
+                    <label for="data_arrivo_ordine">DATA ARRIVO ORDINE</label>
+                    <input type="date" class="form-control" id="data_arrivo_ordine" name="data_arrivo_ordine">
+                </div>
+                <button type="submit" class="btn btn-danger btn-block">Submit</button>
+            </form>
+        </div>
     </div>
-
-            <!-- Bootstrap JS and dependencies -->
-            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

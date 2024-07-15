@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifica/Elimina RDA</title>
-            <!-- Bootstrap CSS -->
-            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background-color: grey;
@@ -17,57 +16,41 @@
             padding: 20px;
             margin-top: 20px;
         }
+        #confirm-box {
+            background-color: red;
+            color: white;
+            display: none;
+        }
     </style>
- 
 </head>
 <body>
-    <div class="container my-5 p-4 bg-white rounded text-center">
-        <h2>FORM MODIFICA RDA</h2>
-        <p>INSERIRE N° RDA PER MODIFICARE I DATI AL SUO INTERNO:</p>
-        <form action="#">
-            <div class="form-group">
-                <label for="rda_number">Numero RDA</label>
-                <input type="text" class="form-control" id="rda_number" name="rda_number" required>
+    <div class="container my-5">
+        <div class="card p-4">
+            <h2 class="card-title">FORM MODIFICA RDA</h2>
+            <p>INSERIRE N° RDA PER MODIFICARE I DATI AL SUO INTERNO:</p>
+            <form action="#">
+                <div class="form-group">
+                    <label for="rda_number">Numero RDA</label>
+                    <input type="text" class="form-control" id="rda_number" name="rda_number" required>
+                </div>
+                <button type="submit" class="btn btn-danger btn-block">Modifica RDA</button>
+            </form>
+            <div class="info-box">
+                INFORMAZIONI DELLA RDA APPENA SCRITTA:
+                <ul>
+                    <li>SIA CAMPI GIÀ COMPILATI CHE CAMPI VUOTI</li>
+                    <li>PER I CAMPI GIÀ COMPILATI: MODIFICARE</li>
+                    <li>PER I CAMPI VUOTI: INSERIRE IL DATO</li>
+                </ul>
             </div>
-            <button type="submit" class="btn btn-danger">Modifica RDA</button>
-        </form>
-        <div class="info-box">
-            INFORMAZIONI DELLA RDA APPENA SCRITTA:
-            <ul class="list-unstyled">
-                <li>SIA CAMPI GIÀ COMPILATI IN PRECEDENZA</li>
-                <li>SIA CAMPI DA POPOLARE</li>
-            </ul>
-        </div>
-        <h2>ELIMINA RDA</h2>
-        <form action="#">
-            <div class="form-group">
-                <label for="delete_rda_number">Numero RDA</label>
-                <input type="text" class="form-control" id="delete_rda_number" name="delete_rda_number" required>
+            <div id="confirm-box" class="info-box">
+                <p>CONFERMA DI ELIMINAZIONE RDA</p>
             </div>
-            <button type="button" class="btn btn-danger" onclick="confirmDelete()">Elimina RDA</button>
-        </form>
-        <div id="confirm-box" class="info-box bg-danger text-white" style="display: none;">
-            SEI SICURO DI VOLER ELIMINARE? SI/NO
-            <button class="btn btn-light" onclick="deleteRDA()">SI</button>
-            <button class="btn btn-light" onclick="hideConfirm()">NO</button>
         </div>
     </div>
-    <script>
-        function confirmDelete() {
-            document.getElementById('confirm-box').style.display = 'block';
-        }
-        function hideConfirm() {
-            document.getElementById('confirm-box').style.display = 'none';
-        }
-        function deleteRDA() {
-            // Add functionality to delete RDA
-            alert('RDA eliminata!');
-        }
-    </script>
-
-            <!-- Bootstrap JS and dependencies -->
-            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

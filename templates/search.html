@@ -3,48 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search</title>
-            <!-- Bootstrap CSS -->
-            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    
+    <title>Cerca RDA</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background-color: grey;
         }
-        .result {
-            background-color: limegreen;
+        .info-box {
+            background-color: lightblue;
+            color: black;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .search-result {
+            background-color: lightgrey;
             color: black;
             padding: 20px;
             margin-top: 20px;
         }
     </style>
-
 </head>
 <body>
-
-    <div class="container my-5 p-4 bg-white rounded text-center">
-        <h2>Search</h2>
-        <form action="#">
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Cerca</button>
+    <div class="container my-5">
+        <div class="card p-4">
+            <h2 class="card-title">FORM PER RICERCARE UNA O PIÙ RDA</h2>
+            <form action="#">
+                <div class="form-group">
+                    <label for="search_field">Seleziona campo di ricerca:</label>
+                    <select class="form-control" id="search_field" name="search_field">
+                        <option value="rda_number">Numero RDA</option>
+                        <option value="basket_name">Basket Name</option>
+                        <option value="fornitore">Fornitore</option>
+                        <option value="commessa">Commessa</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="search_value">Valore da cercare:</label>
+                    <input type="text" class="form-control" id="search_value" name="search_value">
+                </div>
+                <button type="submit" class="btn btn-danger btn-block">Cerca</button>
+            </form>
+            <div class="search-result">
+                RISULTATI DELLA RICERCA:
+                <ul>
+                    <li>Numero RDA: 12345</li>
+                    <li>Basket Name: Nome del Basket</li>
+                    <li>Fornitore: Nome del Fornitore</li>
+                    <li>Commessa: Nome della Commessa</li>
+                </ul>
             </div>
-            <div class="form-group">
-                <button type="button" class="btn btn-secondary">Filtra per</button>
-                <select name="category" id="category" class="form-control mt-2">
-                    <option value="">Seleziona Categoria</option>
-                    <!-- Add more categories as needed -->
-                </select>
-                <input type="text" name="value" id="value" class="form-control mt-2" placeholder="Valore da inserire">
-            </div>
-        </form>
-        <div class="result">
-            RESTITUZIONE FILTRO RICHIESTO
         </div>
     </div>
-
-            <!-- Bootstrap JS and dependencies -->
-            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
