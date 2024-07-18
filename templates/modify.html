@@ -26,31 +26,84 @@
 <body>
     <div class="container my-5">
         <div class="card p-4">
-            <h2 class="card-title">FORM MODIFICA RDA</h2>
-            <p>INSERIRE N° RDA PER MODIFICARE I DATI AL SUO INTERNO:</p>
-            <form action="#">
+            <h2 class="card-title">FORM MODIFICA/ELIMINA</h2>
+            <form id="document-form">
                 <div class="form-group">
-                    <label for="rda_number">Numero RDA</label>
-                    <input type="text" class="form-control" id="rda_number" name="rda_number" required>
+                    <label for="doc_type">Scegli tipologia di documento da modificare o eliminare</label>
+                    <select class="form-control" id="doc_type" name="doc_type" required>
+                        <option value="" disabled selected>Seleziona tipo di documento</option>
+                        <option value="rda">RdA</option>
+                        <option value="ddt">Info Trasporto DDT</option>
+                    </select>
                 </div>
-                <button type="submit" class="btn btn-danger btn-block">Modifica RDA</button>
+                <div class="form-group" id="doc_value_container" style="display: none;">
+                    <label for="doc_value">Inserisci valore del documento</label>
+                    <input type="number" class="form-control" id="doc_value" name="doc_value" required>
+                </div>
+                <button type="button" class="btn btn-danger btn-block" id="search-button" style="display: none;" onclick="searchDocument()">Cerca</button>
             </form>
-            <div class="info-box">
-                INFORMAZIONI DELLA RDA APPENA SCRITTA:
+            <div class="info-box" id="info-box" style="display: none;">
+                INFORMAZIONI DEL DOCUMENTO APPENA SCELTO:
                 <ul>
                     <li>SIA CAMPI GIÀ COMPILATI CHE CAMPI VUOTI</li>
                     <li>PER I CAMPI GIÀ COMPILATI: MODIFICARE</li>
                     <li>PER I CAMPI VUOTI: INSERIRE IL DATO</li>
                 </ul>
+                <button type="button" class="btn btn-warning" onclick="modifyDocument()">Modifica</button>
+                <button type="button" class="btn btn-danger" onclick="deleteDocument()">Elimina</button>
             </div>
             <div id="confirm-box" class="info-box">
-                <p>CONFERMA DI ELIMINAZIONE RDA</p>
+                <p>Sei sicuro di voler cancellare il documento?</p>
+                <button type="button" class="btn btn-light" onclick="confirmDelete()">Si</button>
+                <button type="button" class="btn btn-dark" onclick="cancelDelete()">No</button>
             </div>
         </div>
     </div>
+
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.getElementById('doc_type').addEventListener('change', function() {
+            var docType = this.value;
+            var docValueContainer = document.getElementById('doc_value_container');
+            var searchButton = document.getElementById('search-button');
+            if (docType) {
+                docValueContainer.style.display = 'block';
+                searchButton.style.display = 'block';
+            } else {
+                docValueContainer.style.display = 'none';
+                searchButton.style.display = 'none';
+            }
+        });
+
+        function searchDocument() {
+            var docType = document.getElementById('doc_type').value;
+            var docValue = document.getElementById('doc_value').value;
+
+            // Implementa la logica per cercare il documento nel database qui
+            // Simulazione del risultato della ricerca
+            var documentFound = true;
+
+            if (documentFound) {
+                document.getElementById('info-box').style.display = 'block';
+            } else {
+                alert('Documento non trovato');
+            }
+        }
+
+        function modifyDocument() {
+            // Implementa la logica per modificare il documento qui
+            alert('Documento modificato con successo');
+        }
+
+        function deleteDocument() {
+            // Implementa la logica per eliminare il documento qui
+            document.getElementById('confirm-box').style.display = 'block';
+        }
+    </script>
+
 </body>
 </html>

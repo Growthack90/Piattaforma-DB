@@ -19,7 +19,7 @@
             <form action="/insert" method="POST">
                 <div class="form-group">
                     <label for="rda">RDA (NN)</label>
-                    <input type="text" class="form-control" id="rda" name="rda" required>
+                    <input type="number" class="form-control" id="rda" name="rda" required>
                 </div>
                 <div class="form-group">
                     <label for="basket_name">BASKET NAME (NN)</label>
@@ -27,15 +27,23 @@
                 </div>
                 <div class="form-group">
                     <label for="fornitore">FORNITORE (NN)</label>
-                    <input type="text" class="form-control" id="fornitore" name="fornitore" required>
+                    <select class="form-control" id="fornitore" name="fornitore" required>
+                        <option value="" disabled selected>Seleziona un fornitore</option>
+                        {% for fornitore in fornitori %}
+                            <option value="{{ fornitore }}">{{ fornitore }}</option>
+                        {% endfor %}
+                    </select>
+                    <small id="addFornitoreHelp" class="form-text text-muted">Se il fornitore non è presente, aggiungilo.</small>
+                    <input type="text" class="form-control mt-2" id="new_fornitore" name="new_fornitore" placeholder="Aggiungi nuovo fornitore">
                 </div>
+
                 <div class="form-group">
-                    <label for="valore_shopping_cart">VALORE SHOPPING CART</label>
-                    <input type="text" class="form-control" id="valore_shopping_cart" name="valore_shopping_cart">
+                    <label for="valore_shopping_cart">SHOPPING CART</label>
+                    <input type="number" class="form-control" id="valore_shopping_cart" name="valore_shopping_cart" required>
                 </div>
                 <div class="form-group">
                     <label for="oda">ODA</label>
-                    <input type="text" class="form-control" id="oda" name="oda">
+                    <input type="number" class="form-control" id="oda" name="oda" required>
                 </div>
                 <div class="form-group">
                     <label for="commessa">COMMESSA (NN)</label>
@@ -55,7 +63,14 @@
                 </div>
                 <div class="form-group">
                     <label for="tipologia_acquisto">TIPOLOGIA ACQUISTO (NN)</label>
-                    <input type="text" class="form-control" id="tipologia_acquisto" name="tipologia_acquisto" required>
+                    <select class="form-control" id="tipologia_acquisto" name="tipologia_acquisto" required>
+                        <option value="opzione1"></option>
+                        <option value="opzione2">HW</option>
+                        <option value="opzione3">SRV</option>
+                        <option value="opzione4">Formazione</option>
+                        <option value="opzione5">Licenze</option>
+                        <option value="opzione6">BR</option>
+                    </select>
                 </div>
                 <button type="submit" class="btn btn-danger btn-block">Submit</button>
             </form>

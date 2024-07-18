@@ -5,6 +5,7 @@
 - Install Virtual Environment (VENV)
     * py -3 -m venv .venv
     * .venv\Scripts\activate
+    * deactivate    # to deactivate develop environment
 - Install PIP
 - Install dependencies:
     * pip install setuptools
