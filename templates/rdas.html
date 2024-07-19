@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutte le RdA</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container my-5">
+        <h2>Tutte le RdA</h2>
+        <ul class="list-group">
+            {% for rda in rdas %}
+                <li class="list-group-item">
+                    RDA: {{ rda['rda'] }} | BASKET NAME: {{ rda['basket_name'] }} | FORNITORE: {{ rda['fornitore'] }} | SHOPPING CART: {{ rda['valore_shopping_cart'] }} | ODA: {{ rda['oda'] }} | COMMESSA: {{ rda['commessa'] }} | ELEMENT: {{ rda['element'] }} | RICHIEDENTE: {{ rda['richiedente'] }} | DATA CREAZIONE: {{ rda['data_creazione'] }} | TIPOLOGIA ACQUISTO: {{ rda['tipologia_acquisto'] }}
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="/" class="btn btn-primary mt-4">Torna alla Home</a>
+    </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

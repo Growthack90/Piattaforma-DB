@@ -16,6 +16,11 @@
     <div class="container my-5">
         <div class="card p-4">
             <h2 class="card-title">Form per inserire tutti i campi del DB SHOPPING CART</h2>
+            {% if success %}
+            <div class="alert alert-success" role="alert">
+                RdA inserita con successo!
+            </div>
+            {% endif %}
             <form action="/insert" method="POST">
                 <div class="form-group">
                     <label for="rda">RDA (NN)</label>
@@ -33,7 +38,7 @@
                             <option value="{{ fornitore }}">{{ fornitore }}</option>
                         {% endfor %}
                     </select>
-                    <small id="addFornitoreHelp" class="form-text text-muted">Se il fornitore non è presente, aggiungilo.</small>
+                    <small id="addFornitoreHelp" class="form-text text-muted">Se il fornitore non è presente, aggiungilo</small>
                     <input type="text" class="form-control mt-2" id="new_fornitore" name="new_fornitore" placeholder="Aggiungi nuovo fornitore">
                 </div>
 
@@ -64,21 +69,35 @@
                 <div class="form-group">
                     <label for="tipologia_acquisto">TIPOLOGIA ACQUISTO (NN)</label>
                     <select class="form-control" id="tipologia_acquisto" name="tipologia_acquisto" required>
-                        <option value="opzione1"></option>
-                        <option value="opzione2">HW</option>
-                        <option value="opzione3">SRV</option>
-                        <option value="opzione4">Formazione</option>
-                        <option value="opzione5">Licenze</option>
-                        <option value="opzione6">BR</option>
+                        <option value="nullo"></option>
+                        <option value="HW">HW</option>
+                        <option value="SRV">SRV</option>
+                        <option value="Formazione">Formazione</option>
+                        <option value="Licenze">Licenze</option>
+                        <option value="BR">BR</option>
                     </select>
                 </div>
                 <button type="submit" class="btn btn-danger btn-block">Submit</button>
             </form>
+            <hr>
+            <a href="/show_rdas" class="btn btn-primary btn-block">Mostra tutte le RdA</a>        
         </div>
     </div>
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- Show RdA on database -->
+    <script>
+        document.getElementById('showRdas').addEventListener('click', function() {
+            var rdasDiv = document.getElementById('rdas');
+            if (rdasDiv.style.display === 'none') {
+                rdasDiv.style.display = 'block';
+            } else {
+                rdasDiv.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
