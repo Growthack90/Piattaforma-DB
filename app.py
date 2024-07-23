@@ -37,7 +37,7 @@ def init_db():
         rda INTEGER NOT NULL,
         basket_name TEXT NOT NULL,
         fornitore TEXT NOT NULL,
-        valore_shopping_cart INTEGER NOT NULL,
+        importo_sc INTEGER NOT NULL,
         oda INTEGER NOT NULL,
         commessa TEXT NOT NULL,
         element TEXT NOT NULL,
@@ -71,7 +71,7 @@ def insert():
         basket_name = request.form['basket_name']
         fornitore = request.form['fornitore']
         new_fornitore = request.form['new_fornitore']
-        valore_shopping_cart = request.form['valore_shopping_cart']
+        importo_sc = request.form['importo_sc']
         oda = request.form['oda']
         commessa = request.form['commessa']
         element = request.form['element']
@@ -92,9 +92,9 @@ def insert():
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute("""
-            INSERT INTO example (rda, basket_name, fornitore, valore_shopping_cart, oda, commessa, element, richiedente, data_creazione, tipologia_acquisto)
+            INSERT INTO example (rda, basket_name, fornitore, importo_sc, oda, commessa, element, richiedente, data_creazione, tipologia_acquisto)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (rda, basket_name, fornitore, valore_shopping_cart, oda, commessa, element, richiedente, data_creazione, tipologia_acquisto))
+        """, (rda, basket_name, fornitore, importo_sc, oda, commessa, element, richiedente, data_creazione, tipologia_acquisto))
         connection.commit()
         connection.close()
 
@@ -109,7 +109,6 @@ def insert():
 
     return render_template('insert.html', fornitori=fornitori, success=success)
 
-
 # SHOW RDAs
 @app.route('/show_rdas')
 def show_rdas():
@@ -119,6 +118,33 @@ def show_rdas():
     rdas = cursor.fetchall()
     connection.close()
     return render_template('rdas.html', rdas=rdas)
+
+# ADD FORNITORI
+@app.route('/add_fornitore', methods=['POST'])
+def add_fornitore():
+    data = request.get_json()
+    new_fornitore = data.get('fornitore')
+
+    if new_fornitore:
+        connection = get_fornitori_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("INSERT OR IGNORE INTO fornitori (fornitore) VALUES (?)", (new_fornitore,))
+        connection.commit()
+        connection.close()
+
+        return {"success": True}
+    return {"success": False}, 400
+
+# SHOW FORNITORI
+@app.route('/show_fornitori')
+def show_fornitori():
+    connection = get_fornitori_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM fornitori")
+    fornitori = cursor.fetchall()
+    connection.close()
+    return render_template('fornitori.html', fornitori=fornitori)
+
 
 # LOGISTICS
 @app.route('/logistics')

@@ -40,11 +40,12 @@
                     </select>
                     <small id="addFornitoreHelp" class="form-text text-muted">Se il fornitore non è presente, aggiungilo</small>
                     <input type="text" class="form-control mt-2" id="new_fornitore" name="new_fornitore" placeholder="Aggiungi nuovo fornitore">
+                    <button type="button" class="btn btn-primary mt-2" onclick="addFornitore()">Aggiungi Fornitore</button>
                 </div>
 
                 <div class="form-group">
-                    <label for="valore_shopping_cart">SHOPPING CART</label>
-                    <input type="number" class="form-control" id="valore_shopping_cart" name="valore_shopping_cart" required>
+                    <label for="importo_sc">IMPORTO</label>
+                    <input type="number" class="form-control" id="importo_sc" name="importo_sc" required>
                 </div>
                 <div class="form-group">
                     <label for="oda">ODA</label>
@@ -80,7 +81,8 @@
                 <button type="submit" class="btn btn-danger btn-block">Submit</button>
             </form>
             <hr>
-            <a href="/show_rdas" class="btn btn-primary btn-block">Mostra tutte le RdA</a>        
+            <a href="/show_rdas" class="btn btn-primary btn-block">Mostra tutte le RdA</a>
+            <a href="/show_fornitori" class="btn btn-secondary btn-block">Mostra tutti i Fornitori</a>      
         </div>
     </div>
     <!-- Bootstrap JS and dependencies -->
@@ -88,8 +90,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     
-    <!-- Show RdA on database -->
     <script>
+        // Show RdA on database
         document.getElementById('showRdas').addEventListener('click', function() {
             var rdasDiv = document.getElementById('rdas');
             if (rdasDiv.style.display === 'none') {
@@ -97,7 +99,43 @@
             } else {
                 rdasDiv.style.display = 'none';
             }
-        });
+        }); 
+
+
+        // Aggiungi Fornitore      
+        function addFornitore() {
+            const newFornitoreInput = document.getElementById('new_fornitore');
+            const fornitoreSelect = document.getElementById('fornitore');
+            const newFornitore = newFornitoreInput.value.trim();
+
+            if (newFornitore) {
+                // Invio del nuovo fornitore al server per salvarlo nel database
+                fetch('/add_fornitore', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ fornitore: newFornitore }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Aggiunta del nuovo fornitore al menu a tendina
+                        const option = document.createElement('option');
+                        option.value = newFornitore;
+                        option.text = newFornitore;
+                        option.selected = true;
+                        fornitoreSelect.appendChild(option);
+                        newFornitoreInput.value = '';
+                    } else {
+                        alert('Errore nell\'aggiungere il fornitore');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            }
+        }
     </script>
 </body>
 </html>
