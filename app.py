@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import sqlite3
 
 app = Flask(__name__)
@@ -19,6 +19,7 @@ def get_fornitori_db_connection():
 def init_fornitori_db():
     connection = get_fornitori_db_connection()
     cursor = connection.cursor()
+    # Tabella dei fornitori (file 'fornitori.db')
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS fornitori (
         fornitore TEXT PRIMARY KEY
@@ -31,6 +32,8 @@ def init_db():
     # Database RdA
     connection = get_db_connection()
     cursor = connection.cursor()
+
+    # Tabella example (file 'database.db')
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS example (
         id INTEGER PRIMARY KEY,
@@ -46,6 +49,17 @@ def init_db():
         tipologia_acquisto TEXT NOT NULL
     )
     """)
+
+    # # Tabella ddt (se esiste)
+    # cursor.execute("""
+    # CREATE TABLE IF NOT EXISTS ddt (
+    #     id INTEGER PRIMARY KEY,
+    #     field1 TEXT NOT NULL,
+    #     field2 TEXT NOT NULL
+    #     -- Aggiungi altri campi secondo le tue necessità
+    # )
+    # """)
+
     connection.commit()
     connection.close()
 
@@ -62,7 +76,10 @@ init_db()
 def index():
     return render_template('index.html')
 
+#########################################################################################
 # INSERT
+#########################################################################################
+
 @app.route('/insert', methods=['GET', 'POST'])
 def insert():
     success = False
@@ -109,7 +126,7 @@ def insert():
 
     return render_template('insert.html', fornitori=fornitori, success=success)
 
-# SHOW RDAs
+# Show rdas
 @app.route('/show_rdas')
 def show_rdas():
     connection = get_db_connection()
@@ -119,7 +136,7 @@ def show_rdas():
     connection.close()
     return render_template('rdas.html', rdas=rdas)
 
-# ADD FORNITORI
+# Add fornitori
 @app.route('/add_fornitore', methods=['POST'])
 def add_fornitore():
     data = request.get_json()
@@ -135,7 +152,7 @@ def add_fornitore():
         return {"success": True}
     return {"success": False}, 400
 
-# SHOW FORNITORI
+# Show fornitori
 @app.route('/show_fornitori')
 def show_fornitori():
     connection = get_fornitori_db_connection()
@@ -145,21 +162,104 @@ def show_fornitori():
     connection.close()
     return render_template('fornitori.html', fornitori=fornitori)
 
-
+#########################################################################################
 # LOGISTICS
+#########################################################################################
+
 @app.route('/logistics')
 def logistics():
     return render_template('logistics.html')
 
+#########################################################################################
 # MODIFY
+#########################################################################################
+
 @app.route('/modify')
 def modify():
     return render_template('modify.html')
 
+# Cerca un documento per ID
+@app.route('/search_document', methods=['POST'])
+def search_document():
+    data = request.get_json()
+    doc_type = data['doc_type']
+    doc_value = data['doc_value']
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    if doc_type == 'rda':
+        cursor.execute("SELECT * FROM example WHERE rda = ?", (doc_value,))
+    elif doc_type == 'ddt':
+        cursor.execute("SELECT * FROM ddt WHERE id = ?", (doc_value,))
+    else:
+        connection.close()
+        return jsonify({"error": "Tipo di documento non valido"}), 400
+
+    document = cursor.fetchone()
+    connection.close()
+
+    if document:
+        return jsonify(dict(document)), 200
+    else:
+        return jsonify({"error": "Documento non trovato"}), 404
+
+# Modifica un documento
+@app.route('/modify_document', methods=['POST'])
+def modify_document():
+    data = request.get_json()
+    doc_id = data['id']
+    updated_fields = data['updated_fields']
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    query = "UPDATE example SET "
+    query += ", ".join([f"{key} = ?" for key in updated_fields.keys()])
+    query += " WHERE id = ?"
+    values = list(updated_fields.values()) + [doc_id]
+
+    try:
+        cursor.execute(query, values)
+        connection.commit()
+        return jsonify({"success": True}), 200
+    except Exception as e:
+        connection.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        connection.close()
+
+    return jsonify({"success": True}), 200
+
+# Elimina un documento
+@app.route('/delete_document', methods=['POST'])
+def delete_document():
+    data = request.get_json()
+    doc_id = data['id']
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute("DELETE FROM example WHERE id = ?", (doc_id,))
+        connection.commit()
+        return jsonify({"success": True}), 200
+    except Exception as e:
+        connection.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        connection.close()
+
+    return jsonify({"success": True}), 200
+
+#########################################################################################
 # SEARCH
+#########################################################################################
+
 @app.route('/search')
 def search():
     return render_template('search.html')
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifica/Elimina RDA</title>
-    <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -43,14 +42,55 @@
                 <button type="button" class="btn btn-danger btn-block" id="search-button" style="display: none;" onclick="searchDocument()">Cerca</button>
             </form>
             <div class="info-box" id="info-box" style="display: none;">
-                INFORMAZIONI DEL DOCUMENTO APPENA SCELTO:
-                <ul>
-                    <li>SIA CAMPI GIÀ COMPILATI CHE CAMPI VUOTI</li>
-                    <li>PER I CAMPI GIÀ COMPILATI: MODIFICARE</li>
-                    <li>PER I CAMPI VUOTI: INSERIRE IL DATO</li>
-                </ul>
+                <h3>INFORMAZIONI DEL DOCUMENTO APPENA SCELTO:</h3>
+                <ul id="document-details"></ul>
                 <button type="button" class="btn btn-warning" onclick="modifyDocument()">Modifica</button>
                 <button type="button" class="btn btn-danger" onclick="deleteDocument()">Elimina</button>
+                <div id="update-fields" style="display: none; margin-top: 20px;">
+                    <h3>Modifica Campi</h3>
+                    <input type="hidden" id="doc_id">
+                    <div class="form-group">
+                        <label for="rda">RdA</label>
+                        <input type="number" class="form-control" id="rda" name="rda">
+                    </div>
+                    <div class="form-group">
+                        <label for="basket_name">Nome Basket</label>
+                        <input type="text" class="form-control" id="basket_name" name="basket_name">
+                    </div>
+                    <div class="form-group">
+                        <label for="fornitore">Fornitore</label>
+                        <input type="text" class="form-control" id="fornitore" name="fornitore">
+                    </div>
+                    <div class="form-group">
+                        <label for="importo_sc">Importo SC</label>
+                        <input type="number" class="form-control" id="importo_sc" name="importo_sc">
+                    </div>
+                    <div class="form-group">
+                        <label for="oda">ODA</label>
+                        <input type="number" class="form-control" id="oda" name="oda">
+                    </div>
+                    <div class="form-group">
+                        <label for="commessa">Commessa</label>
+                        <input type="text" class="form-control" id="commessa" name="commessa">
+                    </div>
+                    <div class="form-group">
+                        <label for="element">Elemento</label>
+                        <input type="text" class="form-control" id="element" name="element">
+                    </div>
+                    <div class="form-group">
+                        <label for="richiedente">Richiedente</label>
+                        <input type="text" class="form-control" id="richiedente" name="richiedente">
+                    </div>
+                    <div class="form-group">
+                        <label for="data_creazione">Data Creazione</label>
+                        <input type="date" class="form-control" id="data_creazione" name="data_creazione">
+                    </div>
+                    <div class="form-group">
+                        <label for="tipologia_acquisto">Tipologia Acquisto</label>
+                        <input type="text" class="form-control" id="tipologia_acquisto" name="tipologia_acquisto">
+                    </div>
+                    <button type="button" class="btn btn-success" onclick="saveChanges()">Salva Modifiche</button>
+                </div>
             </div>
             <div id="confirm-box" class="info-box">
                 <p>Sei sicuro di voler cancellare il documento?</p>
@@ -60,12 +100,13 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+        let originalData = {};
+
         document.getElementById('doc_type').addEventListener('change', function() {
             var docType = this.value;
             var docValueContainer = document.getElementById('doc_value_container');
@@ -83,27 +124,86 @@
             var docType = document.getElementById('doc_type').value;
             var docValue = document.getElementById('doc_value').value;
 
-            // Implementa la logica per cercare il documento nel database qui
-            // Simulazione del risultato della ricerca
-            var documentFound = true;
-
-            if (documentFound) {
-                document.getElementById('info-box').style.display = 'block';
-            } else {
-                alert('Documento non trovato');
-            }
+            $.ajax({
+                url: '/search_document',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ doc_type: docType, doc_value: docValue }),
+                success: function(response) {
+                    $('#info-box').show();
+                    $('#document-details').empty();
+                    $('#doc_id').val(response.id); // Imposta l'ID del documento
+                    originalData = response; // Salva i dati originali
+                    for (var key in response) {
+                        $('#document-details').append('<li>' + key + ': ' + response[key] + '</li>');
+                        $('#' + key).val(response[key]); // Imposta i valori dei campi
+                    }
+                    $('#update-fields').show();
+                },
+                error: function(xhr) {
+                    alert('Documento non trovato');
+                }
+            });
         }
 
-        function modifyDocument() {
-            // Implementa la logica per modificare il documento qui
-            alert('Documento modificato con successo');
+        function saveChanges() {
+            var docId = $('#doc_id').val();
+            
+            // Ottieni i nuovi valori dei campi
+            var updatedFields = {};
+            $('#update-fields input').each(function() {
+                var fieldName = $(this).attr('name');
+                var newValue = $(this).val();
+                var originalValue = originalData[fieldName];
+                
+                // Aggiungi solo i campi che sono stati modificati
+                if (newValue !== originalValue) {
+                    updatedFields[fieldName] = newValue;
+                }
+            });
+        
+            if (Object.keys(updatedFields).length === 0) {
+                alert('Nessun campo modificato');
+                return;
+            }
+        
+            $.ajax({
+                url: '/modify_document',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ id: docId, updated_fields: updatedFields }),
+                success: function(response) {
+                    alert('Documento modificato con successo');
+                },
+                error: function(xhr) {
+                    alert('Errore nella modifica del documento');
+                }
+            });
         }
 
         function deleteDocument() {
-            // Implementa la logica per eliminare il documento qui
-            document.getElementById('confirm-box').style.display = 'block';
+            $('#confirm-box').show();
+        }
+
+        function confirmDelete() {
+            var docId = $('#doc_id').val();
+
+            $.ajax({
+                url: '/delete_document',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ id: docId }),
+                success: function(response) {
+                    alert('Documento eliminato con successo');
+                    $('#info-box').hide();
+                    $('#confirm-box').hide();
+                }
+            });
+        }
+
+        function cancelDelete() {
+            $('#confirm-box').hide();
         }
     </script>
-
 </body>
 </html>
