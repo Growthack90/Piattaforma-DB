@@ -120,6 +120,7 @@
             }
         });
 
+        // Search document
         function searchDocument() {
             var docType = document.getElementById('doc_type').value;
             var docValue = document.getElementById('doc_value').value;
@@ -146,6 +147,7 @@
             });
         }
 
+        // Modify document
         function saveChanges() {
             var docId = $('#doc_id').val();
             
@@ -156,31 +158,35 @@
                 var newValue = $(this).val();
                 var originalValue = originalData[fieldName];
                 
-                // Aggiungi solo i campi che sono stati modificati
-                if (newValue !== originalValue) {
-                    updatedFields[fieldName] = newValue;
-                }
-            });
-        
-            if (Object.keys(updatedFields).length === 0) {
-                alert('Nessun campo modificato');
-                return;
+            // Verifica se il campo è presente nel database
+            if (originalValue !== undefined && newValue !== originalValue) {
+                updatedFields[fieldName] = newValue;
+            } else if (originalValue === undefined) {
+                console.warn('Campo non trovato nel database:', fieldName);
             }
-        
-            $.ajax({
-                url: '/modify_document',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ id: docId, updated_fields: updatedFields }),
-                success: function(response) {
-                    alert('Documento modificato con successo');
-                },
-                error: function(xhr) {
-                    alert('Errore nella modifica del documento');
-                }
-            });
+        });
+    
+        if (Object.keys(updatedFields).length === 0) {
+            alert('Nessun campo modificato');
+            return;
         }
+    
+        $.ajax({
+            url: '/modify_document',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ id: docId, updated_fields: updatedFields }),
+            success: function(response) {
+                alert('Documento modificato con successo');
+            },
+            error: function(xhr) {
+                console.error('Errore nella modifica del documento:', xhr.responseText);
+                alert('Errore nella modifica del documento: ' + xhr.responseText);
+            }
+        });
+    }
 
+    // Delete document
         function deleteDocument() {
             $('#confirm-box').show();
         }

@@ -214,6 +214,7 @@ def modify_document():
     connection = get_db_connection()
     cursor = connection.cursor()
 
+    # Costruisci la query di aggiornamento
     query = "UPDATE example SET "
     query += ", ".join([f"{key} = ?" for key in updated_fields.keys()])
     query += " WHERE id = ?"
@@ -225,11 +226,20 @@ def modify_document():
         return jsonify({"success": True}), 200
     except Exception as e:
         connection.rollback()
+        print(f"Errore durante l'aggiornamento: {e}")
         return jsonify({"error": str(e)}), 500
     finally:
         connection.close()
 
-    return jsonify({"success": True}), 200
+# Assicurati che la tabella example nel tuo database SQLite abbia effettivamente le colonne che stai cercando di aggiornare. Puoi farlo eseguendo una query per visualizzare la struttura della tabella
+@app.route('/check_table_structure')
+def check_table_structure():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("PRAGMA table_info(example)")
+    columns = cursor.fetchall()
+    connection.close()
+    return jsonify([dict(column) for column in columns]), 200
 
 # Elimina un documento
 @app.route('/delete_document', methods=['POST'])
