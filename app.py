@@ -262,6 +262,16 @@ def delete_document():
 
     return jsonify({"success": True}), 200
 
+# Restituire elenco fornitori
+@app.route('/get_fornitori', methods=['GET'])
+def get_fornitori():
+    connection = get_fornitori_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT fornitore FROM fornitori")
+    fornitori = [row['fornitore'] for row in cursor.fetchall()]
+    connection.close()
+    return jsonify({"fornitori": fornitori})
+
 #########################################################################################
 # SEARCH
 #########################################################################################

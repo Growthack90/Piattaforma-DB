@@ -6,15 +6,47 @@
     <title>Tutte le RdA</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .rda-item {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            padding: 15px;
+        }
+        .rda-label {
+            font-weight: bold;
+        }
+        .rda-value {
+            margin-left: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="container my-5">
         <h2>Tutte le RdA</h2>
         <ul class="list-group">
             {% for rda in rdas %}
-                <li class="list-group-item">
-                    RDA: {{ rda['rda'] }} | BASKET NAME: {{ rda['basket_name'] }} | FORNITORE: {{ rda['fornitore'] }} | SHOPPING CART: {{ rda['importo_sc'] }} | ODA: {{ rda['oda'] }} | COMMESSA: {{ rda['commessa'] }} | ELEMENT: {{ rda['element'] }} | RICHIEDENTE: {{ rda['richiedente'] }} | DATA CREAZIONE: {{ rda['data_creazione'] }} | TIPOLOGIA ACQUISTO: {{ rda['tipologia_acquisto'] }}
-                </li>
+            <div class="list-group-item rda-item">
+                <div class="row">
+                    <div class="col-md-4"><span class="rda-label">RDA:</span><span class="rda-value">{{ rda['rda'] }}</span></div>
+                    <div class="col-md-4"><span class="rda-label">Basket Name:</span><span class="rda-value">{{ rda['basket_name'] }}</span></div>
+                    <div class="col-md-4"><span class="rda-label">Fornitore:</span><span class="rda-value">{{ rda['fornitore'] }}</span></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-4"><span class="rda-label">Shopping Cart:</span><span class="rda-value">{{ rda['importo_sc'] }}</span></div>
+                    <div class="col-md-4"><span class="rda-label">ODA:</span><span class="rda-value">{{ rda['oda'] }}</span></div>
+                    <div class="col-md-4"><span class="rda-label">Commessa:</span><span class="rda-value">{{ rda['commessa'] }}</span></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-4"><span class="rda-label">Element:</span><span class="rda-value">{{ rda['element'] }}</span></div>
+                    <div class="col-md-4"><span class="rda-label">Richiedente:</span><span class="rda-value">{{ rda['richiedente'] }}</span></div>
+                    <div class="col-md-4"><span class="rda-label">Data Creazione:</span><span class="rda-value">{{ rda['data_creazione'] }}</span></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-4"><span class="rda-label">Tipologia Acquisto:</span><span class="rda-value">{{ rda['tipologia_acquisto'] }}</span></div>
+                </div>
+            </div>
             {% endfor %}
         </ul>
         <a href="/" class="btn btn-primary mt-4">Torna alla Home</a>

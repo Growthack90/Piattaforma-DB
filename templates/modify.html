@@ -59,8 +59,17 @@
                     </div>
                     <div class="form-group">
                         <label for="fornitore">Fornitore</label>
-                        <input type="text" class="form-control" id="fornitore" name="fornitore">
+                        <select class="form-control" id="fornitore" name="fornitore">
+                            <option value="" disabled selected>Seleziona un fornitore</option>
+                            {% for fornitore in fornitori %}
+                                <option value="{{ fornitore }}">{{ fornitore }}</option>
+                            {% endfor %}
+                        </select>
+                        <small id="addFornitoreHelp" class="form-text text-muted">Se il fornitore non è presente, aggiungilo</small>
+                        <input type="text" class="form-control mt-2" id="new_fornitore" name="new_fornitore" placeholder="Aggiungi nuovo fornitore">
+                        <button type="button" class="btn btn-primary mt-2" onclick="addFornitore()">Aggiungi Fornitore</button>
                     </div>
+
                     <div class="form-group">
                         <label for="importo_sc">Importo SC</label>
                         <input type="number" class="form-control" id="importo_sc" name="importo_sc">
@@ -87,7 +96,14 @@
                     </div>
                     <div class="form-group">
                         <label for="tipologia_acquisto">Tipologia Acquisto</label>
-                        <input type="text" class="form-control" id="tipologia_acquisto" name="tipologia_acquisto">
+                        <select class="form-control" id="tipologia_acquisto" name="tipologia_acquisto">
+                            <option value="nullo"></option>
+                            <option value="HW">HW</option>
+                            <option value="SRV">SRV</option>
+                            <option value="Formazione">Formazione</option>
+                            <option value="Licenze">Licenze</option>
+                            <option value="BR">BR</option>
+                        </select>
                     </div>
                     <button type="button" class="btn btn-success" onclick="saveChanges()">Salva Modifiche</button>
                 </div>
@@ -139,7 +155,10 @@
                         $('#document-details').append('<li>' + key + ': ' + response[key] + '</li>');
                         $('#' + key).val(response[key]); // Imposta i valori dei campi
                     }
+                    $('#fornitore').val(response.fornitore);
+                    $('#tipologia_acquisto').val(response.tipologia_acquisto);
                     $('#update-fields').show();
+                    loadFornitori(); // Carica i fornitori
                 },
                 error: function(xhr) {
                     alert('Documento non trovato');
@@ -147,44 +166,44 @@
             });
         }
 
-        // Modify document
+        // Save changes
         function saveChanges() {
             var docId = $('#doc_id').val();
             
             // Ottieni i nuovi valori dei campi
             var updatedFields = {};
-            $('#update-fields input').each(function() {
+            $('#update-fields input, #update-fields select').each(function() {
                 var fieldName = $(this).attr('name');
                 var newValue = $(this).val();
                 var originalValue = originalData[fieldName];
                 
-            // Verifica se il campo è presente nel database
-            if (originalValue !== undefined && newValue !== originalValue) {
-                updatedFields[fieldName] = newValue;
-            } else if (originalValue === undefined) {
-                console.warn('Campo non trovato nel database:', fieldName);
+                // Verifica se il campo è presente nel database
+                if (originalValue !== undefined && newValue !== originalValue) {
+                    updatedFields[fieldName] = newValue;
+                } else if (originalValue === undefined) {
+                    console.warn('Campo non trovato nel database:', fieldName);
+                }
+            });
+
+            if (Object.keys(updatedFields).length === 0) {
+                alert('Nessun campo modificato');
+                return;
             }
-        });
-    
-        if (Object.keys(updatedFields).length === 0) {
-            alert('Nessun campo modificato');
-            return;
+
+            $.ajax({
+                url: '/modify_document',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ id: docId, updated_fields: updatedFields }),
+                success: function(response) {
+                    alert('Documento modificato con successo');
+                },
+                error: function(xhr) {
+                    console.error('Errore nella modifica del documento:', xhr.responseText);
+                    alert('Errore nella modifica del documento: ' + xhr.responseText);
+                }
+            });
         }
-    
-        $.ajax({
-            url: '/modify_document',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ id: docId, updated_fields: updatedFields }),
-            success: function(response) {
-                alert('Documento modificato con successo');
-            },
-            error: function(xhr) {
-                console.error('Errore nella modifica del documento:', xhr.responseText);
-                alert('Errore nella modifica del documento: ' + xhr.responseText);
-            }
-        });
-    }
 
     // Delete document
         function deleteDocument() {
@@ -209,6 +228,62 @@
 
         function cancelDelete() {
             $('#confirm-box').hide();
+        }
+
+         // Load Fornitori         
+        function loadFornitori() {
+            $.ajax({
+                url: '/get_fornitori',
+                type: 'GET',
+                success: function(response) {
+                    const fornitoreSelect = document.getElementById('fornitore');
+                    fornitoreSelect.innerHTML = '<option value="" disabled selected>Seleziona un fornitore</option>'; // Clear previous options
+                    response.fornitori.forEach(function(fornitore) {
+                        const option = document.createElement('option');
+                        option.value = fornitore;
+                        option.text = fornitore;
+                        fornitoreSelect.appendChild(option);
+                    });
+                },
+                error: function(xhr) {
+                    console.error('Errore nel recupero dei fornitori:', xhr.responseText);
+                }
+            });
+        }
+
+        // Aggiungi Fornitore      
+        function addFornitore() {
+            const newFornitoreInput = document.getElementById('new_fornitore');
+            const fornitoreSelect = document.getElementById('fornitore');
+            const newFornitore = newFornitoreInput.value.trim();
+
+            if (newFornitore) {
+                // Invio del nuovo fornitore al server per salvarlo nel database
+                fetch('/add_fornitore', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ fornitore: newFornitore }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Aggiunta del nuovo fornitore al menu a tendina
+                        const option = document.createElement('option');
+                        option.value = newFornitore;
+                        option.text = newFornitore;
+                        option.selected = true;
+                        fornitoreSelect.appendChild(option);
+                        newFornitoreInput.value = '';
+                    } else {
+                        alert('Errore nell\'aggiungere il fornitore');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            }
         }
     </script>
 </body>
