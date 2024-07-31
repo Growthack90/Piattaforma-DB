@@ -18,5 +18,5 @@
     * $ pip list
 
 - Run App
-    * flask --app hello run
+    * flask --app app run
 
