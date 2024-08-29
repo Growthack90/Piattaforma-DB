@@ -18,7 +18,8 @@
             <h2 class="card-title">Lista dei Fornitori</h2>
             <ul class="list-group">
                 {% for fornitore in fornitori %}
-                    <li class="list-group-item">{{ fornitore.fornitore }}</li>
+                    <!-- <li class="list-group-item">{{ fornitore.fornitore }}</li> -->
+                    <li class="list-group-item">{{ fornitore['fornitore'] }}</li>
                 {% endfor %}
             </ul>
             <a href="/insert" class="btn btn-primary mt-4">Torna al modulo di inserimento</a>

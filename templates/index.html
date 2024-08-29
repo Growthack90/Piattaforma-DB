@@ -20,6 +20,9 @@
     </style>
 
     <script>
+        function navigateToHome() {
+            window.location.href = '/';
+        }
         function navigateToInsert() {
             window.location.href = '/insert';
         }
@@ -36,7 +39,27 @@
 </head>
 
 <body>
+
+    <!-- Navbar with dropdown hamburger menu -->
+    <nav class="navbar navbar-dark">
+        <div class="dropdown">
+            <button class="navbar-toggler" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" onclick="navigateToHome()">Home</a>
+                <a class="dropdown-item" href="#">Operazioni RdA</a>
+                <a class="dropdown-item" onclick="navigateToDBFornitori()">DB Fornitori</a>
+                <a class="dropdown-item" href="#">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Operations RdA-->
     <div class="container text-center my-5">
+        <div class="mb-3">
+            <button class="btn btn-primary btn-lg btn-block" onclick="navigateToHome()">Back Home</button>
+        </div>
         <div class="mb-3">
             <button class="btn btn-danger btn-lg btn-block" onclick="navigateToModify()">MODIFICA/ELIMINA RDA</button>
         </div>

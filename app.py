@@ -71,8 +71,19 @@ init_db()
 # # Controllare se il database è stato creato con successo. Se non presente alcun dato nel database il valore di ritorno è "0"
 # print(connection.total_changes)
 
-# INDEX
+#########################################################################################
+# HOME
+#########################################################################################
+
 @app.route('/')
+def home():
+    return render_template('home.html')
+
+#########################################################################################
+# INDEX
+#########################################################################################
+
+@app.route('/index')
 def index():
     return render_template('index.html')
 
