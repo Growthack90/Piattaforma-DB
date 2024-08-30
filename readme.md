@@ -13,6 +13,7 @@
     * $ pip install pandas
     * $ pip install numpy
     * $ pip install seaborn
+    * pip install flask-login
 
 - Check if installed correctly:
     * $ pip list
