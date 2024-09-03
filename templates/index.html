@@ -6,18 +6,8 @@
     <title>Dashboard</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    
-    <style>
-        body {
-            background-color: grey;
-        }
-        .dashboard {
-            background-color: green;
-            color: white;
-            padding: 50px;
-            margin-top: 20px;
-        }
-    </style>
+    <!-- Style CSS -->   
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_index.css') }}">
 
     <script>
         function navigateToHome() {
@@ -49,7 +39,9 @@
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <a class="dropdown-item" onclick="navigateToHome()">Home</a>
                 <a class="dropdown-item" href="#">Operazioni RdA</a>
-                <a class="dropdown-item" onclick="navigateToDBFornitori()">DB Fornitori</a>
+                <a class="dropdown-item" href="/show_fornitori">DB Fornitori</a>
+                <a class="dropdown-item" href="/show_rdas">Mostra tutte le RdA</a>
+                <a class="dropdown-item" href="#">Statistiche</a>
                 <a class="dropdown-item" href="#">Contact</a>
             </div>
         </div>

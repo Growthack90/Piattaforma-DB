@@ -1,0 +1,9 @@
+body {
+    background-color: grey;
+}
+.dashboard {
+    background-color: green;
+    color: white;
+    padding: 50px;
+    margin-top: 20px;
+}

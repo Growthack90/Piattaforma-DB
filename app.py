@@ -98,7 +98,7 @@ init_db()
 @app.route('/')
 @login_required
 def home():
-    return render_template('home.html')
+    return render_template('home.html', username=current_user.id)
 
 # Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -334,5 +334,6 @@ def search():
     return render_template('search.html')
 #########################################################################################
 
+# non dimenticare di cambiarlo in False prima di caricarlo sull'host per evitare qualsiasi attacco da parte di hacker
 if __name__ == "__main__":
     app.run(debug=True)
