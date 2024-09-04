@@ -15,14 +15,35 @@
             padding: 20px;
             margin-top: 20px;
         }
-        #confirm-box {
-            background-color: red;
-            color: white;
-            display: none;
-        }
     </style>
+    <script>
+        function navigateToHome() {
+        window.location.href = '/';
+        }
+        function navigateToIndex() {
+        window.location.href = '/index';
+        }
+    </script>
 </head>
 <body>
+
+    <!-- Navbar with dropdown hamburger menu -->
+    <nav class="navbar navbar-dark">
+        <div class="dropdown">
+            <button class="navbar-toggler" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" onclick="navigateToHome()">Home</a>
+                <a class="dropdown-item" onclick="navigateToIndex()">Operazioni RdA</a>
+                <a class="dropdown-item" href="/show_fornitori">DB Fornitori</a>
+                <a class="dropdown-item" href="/show_rdas">Mostra tutte le RdA</a>
+                <a class="dropdown-item" href="#">Statistiche</a>
+                <a class="dropdown-item" href="#">Contact</a>
+            </div>
+        </div> 
+    </nav>
+
     <div class="container my-5">
         <div class="card p-4">
             <h2 class="card-title">FORM MODIFICA/ELIMINA</h2>
@@ -107,11 +128,6 @@
                     </div>
                     <button type="button" class="btn btn-success" onclick="saveChanges()">Salva Modifiche</button>
                 </div>
-            </div>
-            <div id="confirm-box" class="info-box">
-                <p>Sei sicuro di voler cancellare il documento?</p>
-                <button type="button" class="btn btn-light" onclick="confirmDelete()">Si</button>
-                <button type="button" class="btn btn-dark" onclick="cancelDelete()">No</button>
             </div>
         </div>
     </div>
@@ -205,14 +221,12 @@
             });
         }
 
-    // Delete document
+        // Delete document
         function deleteDocument() {
-            $('#confirm-box').show();
-        }
-
-        function confirmDelete() {
-            var docId = $('#doc_id').val();
-
+        var docId = $('#doc_id').val();
+        var confirmation = window.confirm("Sei sicuro di voler cancellare il documento?");
+        
+        if (confirmation) {
             $.ajax({
                 url: '/delete_document',
                 type: 'POST',
@@ -221,16 +235,15 @@
                 success: function(response) {
                     alert('Documento eliminato con successo');
                     $('#info-box').hide();
-                    $('#confirm-box').hide();
+                },
+                error: function(xhr) {
+                    alert('Errore nella cancellazione del documento: ' + xhr.responseText);
                 }
             });
         }
-
-        function cancelDelete() {
-            $('#confirm-box').hide();
         }
 
-         // Load Fornitori         
+        // Load Fornitori         
         function loadFornitori() {
             $.ajax({
                 url: '/get_fornitori',

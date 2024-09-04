@@ -8,6 +8,9 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        body {
+            background-color: grey;
+        }
         .rda-item {
             border: 1px solid #dee2e6;
             border-radius: 5px;
@@ -21,8 +24,35 @@
             margin-left: 5px;
         }
     </style>
+    <script>
+        function navigateToHome() {
+        window.location.href = '/';
+        }
+        function navigateToIndex() {
+        window.location.href = '/index';
+        }
+    </script>
 </head>
 <body>
+
+
+    <!-- Navbar with dropdown hamburger menu -->
+    <nav class="navbar navbar-dark">
+        <div class="dropdown">
+            <button class="navbar-toggler" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" onclick="navigateToHome()">Home</a>
+                <a class="dropdown-item" onclick="navigateToIndex()">Operazioni RdA</a>
+                <a class="dropdown-item" href="/show_fornitori">DB Fornitori</a>
+                <a class="dropdown-item" href="#">Mostra tutte le RdA</a>
+                <a class="dropdown-item" href="#">Statistiche</a>
+                <a class="dropdown-item" href="#">Contact</a>
+            </div>
+        </div> 
+    </nav>
+
     <div class="container my-5">
         <h2>Tutte le RdA</h2>
         <ul class="list-group">
