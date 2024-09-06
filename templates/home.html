@@ -17,6 +17,13 @@
         function navigateToLogin() {
             window.location.href = '/login';
         }
+        function navigateToLogout() {
+            window.location.href = '/logout';
+        }
+
+        function navigateToRegister() {
+            window.location.href = '/register';
+        }
     </script>
 </head>
 
@@ -36,13 +43,13 @@
                 <a class="dropdown-item" href="#">Statistiche</a>
                 <a class="dropdown-item" href="#">Contact</a>
             </div>
-        </div> 
+            <!-- Buttons for Login, Logout, and Register -->
+            <div class="ml-auto">
+                <button class="btn btn-primary" onclick="navigateToLogin()">Login</button>
+                <button class="btn btn-secondary" onclick="navigateToLogout()">Logout</button>
+                <button class="btn btn-success" onclick="navigateToRegister()">Registrati</button>            
+            </div> 
     </nav>
-
-    <!-- Login -->
-     <div>
-        <a class="to-define" onclick="navigateToLogin()">Login</a>
-     </div>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

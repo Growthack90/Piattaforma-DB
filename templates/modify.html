@@ -67,7 +67,9 @@
                 <ul id="document-details"></ul>
                 <button type="button" class="btn btn-warning" onclick="modifyDocument()">Modifica</button>
                 <button type="button" class="btn btn-danger" onclick="deleteDocument()">Elimina</button>
-                <div id="update-fields" style="display: none; margin-top: 20px;">
+                <button type="button" class="btn btn-success" onclick="updateDocument()">Aggiorna</button>
+
+                <div id="update-fields" style="display: none; margin-top: 20px;"> <!-- Questa sezione è nascosta di default -->
                     <h3>Modifica Campi</h3>
                     <input type="hidden" id="doc_id">
                     <div class="form-group">
@@ -156,7 +158,7 @@
         function searchDocument() {
             var docType = document.getElementById('doc_type').value;
             var docValue = document.getElementById('doc_value').value;
-
+        
             $.ajax({
                 url: '/search_document',
                 type: 'POST',
@@ -168,13 +170,13 @@
                     $('#doc_id').val(response.id); // Imposta l'ID del documento
                     originalData = response; // Salva i dati originali
                     for (var key in response) {
-                        $('#document-details').append('<li>' + key + ': ' + response[key] + '</li>');
                         $('#' + key).val(response[key]); // Imposta i valori dei campi
+                        $('#document-details').append('<li>' + key + ': ' + response[key] + '</li>');
                     }
-                    $('#fornitore').val(response.fornitore);
+                    $('#fornitore').val(response.fornitore); // Imposta il fornitore già presente
                     $('#tipologia_acquisto').val(response.tipologia_acquisto);
                     $('#update-fields').show();
-                    loadFornitori(); // Carica i fornitori
+                    loadFornitori(response.fornitore); // Carica i fornitori e mantieni il selezionato
                 },
                 error: function(xhr) {
                     alert('Documento non trovato');
@@ -221,6 +223,11 @@
             });
         }
 
+        // Modify document
+        function modifyDocument() {
+            document.getElementById('update-fields').style.display = 'block'; // Mostra la sezione Modifica Campi
+        }
+
         // Delete document
         function deleteDocument() {
         var docId = $('#doc_id').val();
@@ -243,26 +250,85 @@
         }
         }
 
+        // Update document
+        function updateDocument() {
+            var docId = $('#doc_id').val();
+        
+            // Ottieni i nuovi valori dei campi
+            var updatedFields = {};
+            $('#update-fields input, #update-fields select').each(function() {
+                var fieldName = $(this).attr('name');
+                var newValue = $(this).val();
+                var originalValue = originalData[fieldName];
+
+                // Verifica se il campo è presente nel database e se è stato modificato
+                if (originalValue !== undefined && newValue !== originalValue) {
+                    updatedFields[fieldName] = newValue;
+                } else if (originalValue === undefined) {
+                    console.warn('Campo non trovato nel database:', fieldName);
+                }
+            });
+        
+            if (Object.keys(updatedFields).length === 0) {
+                alert('Nessun campo modificato');
+                return;
+            }
+        
+            $.ajax({
+                url: '/modify_document',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ id: docId, updated_fields: updatedFields }),
+                success: function(response) {
+                    alert('Documento aggiornato con successo');
+                },
+                error: function(xhr) {
+                    console.error('Errore nell\'aggiornamento del documento:', xhr.responseText);
+                    alert('Errore nell\'aggiornamento del documento: ' + xhr.responseText);
+                }
+            });
+        }
+
+
         // Load Fornitori         
-        function loadFornitori() {
+        function loadFornitori(selectedFornitore) {
             $.ajax({
                 url: '/get_fornitori',
                 type: 'GET',
                 success: function(response) {
                     const fornitoreSelect = document.getElementById('fornitore');
-                    fornitoreSelect.innerHTML = '<option value="" disabled selected>Seleziona un fornitore</option>'; // Clear previous options
+        
+                    // Pulire le opzioni esistenti e aggiungere l'opzione selezionata se non presente
+                    fornitoreSelect.innerHTML = '<option value="" disabled>Seleziona un fornitore</option>'; 
+                    let foundSelected = false;
                     response.fornitori.forEach(function(fornitore) {
                         const option = document.createElement('option');
                         option.value = fornitore;
                         option.text = fornitore;
+        
+                        if (fornitore === selectedFornitore) {
+                            option.selected = true;
+                            foundSelected = true;
+                        }
+        
                         fornitoreSelect.appendChild(option);
                     });
+        
+                    // Se il fornitore selezionato non è trovato, aggiungilo come opzione
+                    if (selectedFornitore && !foundSelected) {
+                        const option = document.createElement('option');
+                        option.value = selectedFornitore;
+                        option.text = selectedFornitore;
+                        option.selected = true;
+                        fornitoreSelect.appendChild(option);
+                    }
                 },
                 error: function(xhr) {
                     console.error('Errore nel recupero dei fornitori:', xhr.responseText);
                 }
             });
         }
+
 
         // Aggiungi Fornitore      
         function addFornitore() {
