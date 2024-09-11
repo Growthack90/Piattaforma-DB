@@ -5,17 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifica/Elimina RDA</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: grey;
-        }
-        .info-box {
-            background-color: lightgreen;
-            color: black;
-            padding: 20px;
-            margin-top: 20px;
-        }
-    </style>
+
+    <!-- Style CSS -->   
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_modify.css') }}">
+
     <script>
         function navigateToHome() {
         window.location.href = '/';
@@ -47,6 +40,7 @@
     <div class="container my-5">
         <div class="card p-4">
             <h2 class="card-title">FORM MODIFICA/ELIMINA</h2>
+<!-- ############################################################################################################################# -->            
             <form id="document-form">
                 <div class="form-group">
                     <label for="doc_type">Scegli tipologia di documento da modificare o eliminare</label>
@@ -62,15 +56,16 @@
                 </div>
                 <button type="button" class="btn btn-danger btn-block" id="search-button" style="display: none;" onclick="searchDocument()">Cerca</button>
             </form>
+<!-- ############################################################################################################################# -->
             <div class="info-box" id="info-box" style="display: none;">
                 <h3>INFORMAZIONI DEL DOCUMENTO APPENA SCELTO:</h3>
                 <ul id="document-details"></ul>
                 <button type="button" class="btn btn-warning" onclick="modifyDocument()">Modifica</button>
                 <button type="button" class="btn btn-danger" onclick="deleteDocument()">Elimina</button>
                 <button type="button" class="btn btn-success" onclick="updateDocument()">Aggiorna</button>
-
-                <div id="update-fields" style="display: none; margin-top: 20px;"> <!-- Questa sezione è nascosta di default -->
-                    <h3>Modifica Campi</h3>
+<!-- ############################################################################################################################# -->
+                <div id="update-fields"> <!-- Sezione nascosta di default -->
+                    <h3>MODIFICA CAMPI</h3>
                     <input type="hidden" id="doc_id">
                     <div class="form-group">
                         <label for="rda">RdA</label>
@@ -192,7 +187,7 @@
             var updatedFields = {};
             $('#update-fields input, #update-fields select').each(function() {
                 var fieldName = $(this).attr('name');
-                var newValue = $(this).val();
+                var newValue = $(this).val().trim();
                 var originalValue = originalData[fieldName];
                 
                 // Verifica se il campo è presente nel database
@@ -207,6 +202,13 @@
                 alert('Nessun campo modificato');
                 return;
             }
+
+            $('#document-details').empty();  // Svuota l'area dei dettagli
+            for (var key in updatedFields) {
+                originalData[key] = updatedFields[key];  // Aggiorna i dati originali
+                $('#document-details').append('<li>' + key + ': ' + updatedFields[key] + '</li>');  // Mostra i nuovi dettagli
+            }
+
 
             $.ajax({
                 url: '/modify_document',
@@ -223,10 +225,17 @@
             });
         }
 
+
         // Modify document
         function modifyDocument() {
-            document.getElementById('update-fields').style.display = 'block'; // Mostra la sezione Modifica Campi
+            var updateFields = document.getElementById("update-fields");
+            if (updateFields.style.display === "none") {
+                updateFields.style.display = "block"; // Mostra i campi
+            } else {
+                updateFields.style.display = "none"; // Nascondi i campi
+            }
         }
+
 
         // Delete document
         function deleteDocument() {
@@ -250,6 +259,8 @@
         }
         }
 
+
+
         // Update document
         function updateDocument() {
             var docId = $('#doc_id').val();
@@ -258,22 +269,16 @@
             var updatedFields = {};
             $('#update-fields input, #update-fields select').each(function() {
                 var fieldName = $(this).attr('name');
-                var newValue = $(this).val();
+                var newValue = $(this).val().trim();
                 var originalValue = originalData[fieldName];
-
-                // Verifica se il campo è presente nel database e se è stato modificato
-                if (originalValue !== undefined && newValue !== originalValue) {
-                    updatedFields[fieldName] = newValue;
-                } else if (originalValue === undefined) {
-                    console.warn('Campo non trovato nel database:', fieldName);
+        
+                // Assicurati che il fieldName sia definito e non sia undefined
+                if (fieldName && newValue !== undefined && newValue !== '') {
+                    updatedFields[fieldName] = newValue || originalValue;  // Usa il nuovo valore se presente, altrimenti quello originale
                 }
             });
         
-            if (Object.keys(updatedFields).length === 0) {
-                alert('Nessun campo modificato');
-                return;
-            }
-        
+            // Manda la richiesta al server per modificare il documento
             $.ajax({
                 url: '/modify_document',
                 type: 'POST',
@@ -281,6 +286,17 @@
                 data: JSON.stringify({ id: docId, updated_fields: updatedFields }),
                 success: function(response) {
                     alert('Documento aggiornato con successo');
+        
+                    // Aggiorna l'area delle informazioni con tutti i valori (modificati e non)
+                    $('#document-details').empty();  // Svuota l'area dei dettagli
+        
+                    for (var key in originalData) {
+                        var valueToShow = updatedFields[key] || originalData[key];  // Mostra il nuovo valore o l'originale se non modificato
+                        $('#document-details').append('<li>' + key + ': ' + valueToShow + '</li>');  // Mostra i dettagli
+                    }
+        
+                    // Aggiorna i dati originali con quelli modificati
+                    originalData = { ...originalData, ...updatedFields };  // Aggiorna il documento con i nuovi valori
                 },
                 error: function(xhr) {
                     console.error('Errore nell\'aggiornamento del documento:', xhr.responseText);
@@ -288,6 +304,8 @@
                 }
             });
         }
+
+
 
 
         // Load Fornitori         

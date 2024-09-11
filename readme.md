@@ -14,6 +14,7 @@
     * $ pip install numpy
     * $ pip install seaborn
     * pip install flask-login
+    * pip install jupyter
 
 - Check if installed correctly:
     * $ pip list

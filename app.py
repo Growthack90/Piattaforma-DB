@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from userModel import User, users
 
@@ -6,9 +6,8 @@ import sqlite3
 
 app = Flask(__name__)
 
-#########################################################################################
+
 # Set Login
-#########################################################################################
 app.secret_key = 'your_secret_key'  # Sostituisci con una chiave segreta più sicura
 
 # Configura Flask-Login
@@ -20,9 +19,8 @@ login_manager.login_view = 'login'
 def load_user(username):
     return User.get(username)
 
-#########################################################################################
+
 # STRUTTURA E CONNESSIONE DB
-#########################################################################################
 # Creazione e comunicazione con il database RdA
 def get_db_connection():
     connection = sqlite3.connect("database-rda.db")
@@ -91,12 +89,8 @@ init_db()
 # # Controllare se il database è stato creato con successo. Se non presente alcun dato nel database il valore di ritorno è "0"
 # print(connection.total_changes)
 
-#########################################################################################
-# HOME
-#########################################################################################
-
+# Home
 @app.route('/')
-@login_required
 def home():
     return render_template('home.html', username=current_user.id)
 
@@ -115,24 +109,20 @@ def login():
             flash('Invalid credentials, please try again.', 'danger')
     return render_template('login.html')
 
+# Logout
 @app.route('/logout')
-@login_required
 def logout():
     logout_user()
     flash('You have been logged out.', 'info')
-    return redirect(url_for('home'))
-#########################################################################################
-# INDEX
-#########################################################################################
+    return redirect(url_for('login'))
 
+# Index
 @app.route('/index')
+@login_required
 def index():
     return render_template('index.html')
 
-#########################################################################################
-# INSERT
-#########################################################################################
-
+# Insert
 @app.route('/insert', methods=['GET', 'POST'])
 def insert():
     success = False
@@ -215,18 +205,12 @@ def show_fornitori():
     connection.close()
     return render_template('fornitori.html', fornitori=fornitori)
 
-#########################################################################################
-# LOGISTICS
-#########################################################################################
-
+# Logistics
 @app.route('/logistics')
 def logistics():
     return render_template('logistics.html')
 
-#########################################################################################
-# MODIFY
-#########################################################################################
-
+# Modify
 @app.route('/modify')
 def modify():
     return render_template('modify.html')
@@ -325,14 +309,11 @@ def get_fornitori():
     connection.close()
     return jsonify({"fornitori": fornitori})
 
-#########################################################################################
-# SEARCH
-#########################################################################################
-
+# Search
 @app.route('/search')
 def search():
     return render_template('search.html')
-#########################################################################################
+
 
 # non dimenticare di cambiarlo in False prima di caricarlo sull'host per evitare qualsiasi attacco da parte di hacker
 if __name__ == "__main__":

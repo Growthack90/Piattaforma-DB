@@ -9,3 +9,5 @@ database-rda.db
 fornitori.db
 
 init_script.py
+
+JupyterNotebook_example/

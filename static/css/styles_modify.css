@@ -1,0 +1,13 @@
+body {
+    background-color: grey;
+}
+.info-box {
+    background-color: lightgreen;
+    color: black;
+    padding: 20px;
+    margin-top: 20px;
+}
+#update-fields {
+    display: none; 
+    margin-top: 20px;
+}
