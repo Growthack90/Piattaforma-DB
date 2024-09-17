@@ -149,35 +149,51 @@
             }
         });
 
-        // Search document
-        function searchDocument() {
-            var docType = document.getElementById('doc_type').value;
-            var docValue = document.getElementById('doc_value').value;
-        
-            $.ajax({
-                url: '/search_document',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ doc_type: docType, doc_value: docValue }),
-                success: function(response) {
-                    $('#info-box').show();
-                    $('#document-details').empty();
-                    $('#doc_id').val(response.id); // Imposta l'ID del documento
-                    originalData = response; // Salva i dati originali
-                    for (var key in response) {
-                        $('#' + key).val(response[key]); // Imposta i valori dei campi
-                        $('#document-details').append('<li>' + key + ': ' + response[key] + '</li>');
-                    }
-                    $('#fornitore').val(response.fornitore); // Imposta il fornitore già presente
-                    $('#tipologia_acquisto').val(response.tipologia_acquisto);
-                    $('#update-fields').show();
-                    loadFornitori(response.fornitore); // Carica i fornitori e mantieni il selezionato
-                },
-                error: function(xhr) {
-                    alert('Documento non trovato');
-                }
-            });
+
+
+
+
+// Search document
+function searchDocument() {
+    var docType = document.getElementById('doc_type').value;
+    var docValue = document.getElementById('doc_value').value;
+
+    $.ajax({
+        url: '/search_document',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ doc_type: docType, doc_value: docValue }),
+        success: function(response) {
+            $('#info-box').show();
+            $('#document-details').empty();
+            $('#doc_id').val(response.id); 
+            originalData = response; 
+
+            // Definisci l'ordine dei campi desiderato
+            var fieldOrder = [
+                'rda', 'basket_name', 'fornitore', 'importo_sc', 'oda', 'commessa', 
+                'element', 'richiedente', 'data_creazione', 'tipologia_acquisto'
+            ];
+
+            // Itera sull'array fieldOrder per estrarre i valori nell'ordine corretto
+            for (var i = 0; i < fieldOrder.length; i++) {
+                var key = fieldOrder[i];
+                $('#' + key).val(response[key]); 
+                $('#document-details').append('<li>' + key + ': ' + response[key] + '</li>');
+            }
+
+            $('#fornitore').val(response.fornitore); 
+            $('#tipologia_acquisto').val(response.tipologia_acquisto);
+            $('#update-fields').show();
+            loadFornitori(response.fornitore); 
+        },
+        error: function(xhr) {
+            alert('Documento non trovato');
         }
+    });
+}
+
+
 
         // Save changes
         function saveChanges() {
@@ -261,49 +277,51 @@
 
 
 
-        // Update document
         function updateDocument() {
-            var docId = $('#doc_id').val();
-        
-            // Ottieni i nuovi valori dei campi
-            var updatedFields = {};
-            $('#update-fields input, #update-fields select').each(function() {
-                var fieldName = $(this).attr('name');
-                var newValue = $(this).val().trim();
-                var originalValue = originalData[fieldName];
-        
-                // Assicurati che il fieldName sia definito e non sia undefined
-                if (fieldName && newValue !== undefined && newValue !== '') {
-                    updatedFields[fieldName] = newValue || originalValue;  // Usa il nuovo valore se presente, altrimenti quello originale
-                }
-            });
-        
-            // Manda la richiesta al server per modificare il documento
-            $.ajax({
-                url: '/modify_document',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ id: docId, updated_fields: updatedFields }),
-                success: function(response) {
-                    alert('Documento aggiornato con successo');
-        
-                    // Aggiorna l'area delle informazioni con tutti i valori (modificati e non)
-                    $('#document-details').empty();  // Svuota l'area dei dettagli
-        
-                    for (var key in originalData) {
-                        var valueToShow = updatedFields[key] || originalData[key];  // Mostra il nuovo valore o l'originale se non modificato
-                        $('#document-details').append('<li>' + key + ': ' + valueToShow + '</li>');  // Mostra i dettagli
-                    }
-        
-                    // Aggiorna i dati originali con quelli modificati
-                    originalData = { ...originalData, ...updatedFields };  // Aggiorna il documento con i nuovi valori
-                },
-                error: function(xhr) {
-                    console.error('Errore nell\'aggiornamento del documento:', xhr.responseText);
-                    alert('Errore nell\'aggiornamento del documento: ' + xhr.responseText);
-                }
-            });
+    var docId = $('#doc_id').val();
+
+    // Ottieni i nuovi valori dei campi, mantenendo l'ordine
+    var updatedFields = {};
+    $('#update-fields .form-group').each(function() { // Itera sui .form-group
+        var inputField = $(this).find('input, select'); // Trova input o select all'interno
+        var fieldName = inputField.attr('name');
+        var newValue = inputField.val().trim();
+        var originalValue = originalData[fieldName];
+
+        if (fieldName && newValue !== undefined && newValue !== '') {
+            updatedFields[fieldName] = newValue || originalValue; 
         }
+    });
+
+    // Manda la richiesta al server per modificare il documento
+    $.ajax({
+        url: '/modify_document',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ id: docId, updated_fields: updatedFields }),
+        success: function(response) {
+            alert('Documento aggiornato con successo');
+
+            // Aggiorna l'area delle informazioni mantenendo l'ordine
+            $('#document-details').empty(); 
+
+            // Itera sui .form-group per mantenere l'ordine
+            $('#update-fields .form-group').each(function() { 
+                var inputField = $(this).find('input, select');
+                var fieldName = inputField.attr('name');
+                var valueToShow = updatedFields[fieldName] || originalData[fieldName];
+                $('#document-details').append('<li>' + fieldName + ': ' + valueToShow + '</li>'); 
+            });
+
+            // Aggiorna i dati originali con quelli modificati
+            originalData = { ...originalData, ...updatedFields }; 
+        },
+        error: function(xhr) {
+            console.error('Errore nell\'aggiornamento del documento:', xhr.responseText);
+            alert('Errore nell\'aggiornamento del documento: ' + xhr.responseText);
+        }
+    });
+}
 
 
 
