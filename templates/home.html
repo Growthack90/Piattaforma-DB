@@ -46,8 +46,10 @@
             <!-- Buttons for Login, Logout, and Register -->
             <div class="ml-auto">
                 <button class="btn btn-primary" onclick="navigateToLogin()">Login</button>
+                <button class="btn btn-success" onclick="navigateToRegister()">Registrati</button> 
+                {% if current_user.is_authenticated %}
                 <button class="btn btn-secondary" onclick="navigateToLogout()">Logout</button>
-                <button class="btn btn-success" onclick="navigateToRegister()">Registrati</button>            
+                {% endif %}
             </div> 
     </nav>
 

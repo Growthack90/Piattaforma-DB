@@ -99,6 +99,7 @@ init_db()
 
 # Home
 @app.route('/')
+@login_required
 def home():
     return render_template('home.html', username=current_user.id)
 
@@ -112,7 +113,7 @@ def login():
         if user and users[username]['password'] == password:
             login_user(user)
             flash('Login successful!', 'success')
-            return redirect(url_for('index'))
+            return redirect(url_for('home'))
         else:
             flash('Invalid credentials, please try again.', 'danger')
     return render_template('login.html')
