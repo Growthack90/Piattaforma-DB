@@ -21,17 +21,25 @@ def load_user(username):
 
 
 # STRUTTURA E CONNESSIONE DB
-# Creazione e comunicazione con il database RdA
+# Creazione e comunicazione con il database RdA (con aggiunta di una corretta gestione degli errori alle query del database per rilevare eccezioni e impedire l'arresto anomalo dell'applicazione)
 def get_db_connection():
+  try:
     connection = sqlite3.connect("database-rda.db")
     connection.row_factory = sqlite3.Row
     return connection
+  except sqlite3.Error as e:
+      print(f"Database connection error: {e}")
+      return None  # Alternatively, raise a custom exception or handle it in the calling function.
 
-# Creazione e comunicazione con il database fornitori
+# Creazione e comunicazione con il database fornitori (con aggiunta di una corretta gestione degli errori alle query del database per rilevare eccezioni e impedire l'arresto anomalo dell'applicazione)
 def get_fornitori_db_connection():
+  try:
     connection = sqlite3.connect("fornitori.db")
     connection.row_factory = sqlite3.Row
     return connection
+  except sqlite3.Error as e:
+    print(f"Fornitori database connection error: {e}")
+  return None
 
 # Crea la struttura dei database se non esiste
 def init_fornitori_db():
@@ -126,46 +134,65 @@ def index():
 @app.route('/insert', methods=['GET', 'POST'])
 def insert():
     success = False
-    if request.method == 'POST':
-        rda = request.form['rda']
-        basket_name = request.form['basket_name']
-        fornitore = request.form['fornitore']
-        new_fornitore = request.form['new_fornitore']
-        importo_sc = request.form['importo_sc']
-        oda = request.form['oda']
-        commessa = request.form['commessa']
-        element = request.form['element']
-        richiedente = request.form['richiedente']
-        data_creazione = request.form['data_creazione']
-        tipologia_acquisto = request.form['tipologia_acquisto']
+    try:
+        if request.method == 'POST':
+            rda = request.form['rda']
+            basket_name = request.form['basket_name']
+            fornitore = request.form['fornitore']
+            new_fornitore = request.form['new_fornitore']
+            importo_sc = request.form['importo_sc']
+            oda = request.form['oda']
+            commessa = request.form['commessa']
+            element = request.form['element']
+            richiedente = request.form['richiedente']
+            data_creazione = request.form['data_creazione']
+            tipologia_acquisto = request.form['tipologia_acquisto']
 
-        if new_fornitore:
-            fornitore = new_fornitore
-            # Inserisci il nuovo fornitore nel database fornitori
-            connection = get_fornitori_db_connection()
-            cursor = connection.cursor()
-            cursor.execute("INSERT OR IGNORE INTO fornitori (fornitore) VALUES (?)", (new_fornitore,))
+            connection = None
+    
+            if new_fornitore:
+                fornitore = new_fornitore
+                # Inserisci il nuovo fornitore nel database fornitori
+                connection = get_fornitori_db_connection()
+                if connection:
+                    cursor = connection.cursor()
+                    cursor.execute("INSERT OR IGNORE INTO fornitori (fornitore) VALUES (?)", (new_fornitore,))
+                    connection.commit()
+                    connection.close()
+                else:
+                    flash("Database connection error.", 'danger')
+                    return render_template('insert.html', fornitori=[], success=False)
+
+    
+            # Inserisci i dati nel database RdA
+            connection = get_db_connection()
+            if connection:
+                cursor = connection.cursor()
+                cursor.execute("""
+                INSERT INTO example (rda, basket_name, fornitore, importo_sc, oda, commessa, element, richiedente, data_creazione, tipologia_acquisto)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (rda, basket_name, fornitore, importo_sc, oda, commessa, element, richiedente, data_creazione, tipologia_acquisto))
             connection.commit()
             connection.close()
-
-        # Inserisci i dati nel database RdA
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute("""
-            INSERT INTO example (rda, basket_name, fornitore, importo_sc, oda, commessa, element, richiedente, data_creazione, tipologia_acquisto)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (rda, basket_name, fornitore, importo_sc, oda, commessa, element, richiedente, data_creazione, tipologia_acquisto))
-        connection.commit()
-        connection.close()
-
-        success = True
-
-    # Recupera l'elenco dei fornitori dal database fornitori.db
-    connection = get_fornitori_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT fornitore FROM fornitori")
-    fornitori = [row['fornitore'] for row in cursor.fetchall()]
-    connection.close()
+    
+            success = True
+    
+        # Recupera l'elenco dei fornitori dal database fornitori.db
+        connection = get_fornitori_db_connection()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute("SELECT fornitore FROM fornitori")
+            fornitori = [row['fornitore'] for row in cursor.fetchall()]
+            connection.close()
+        else:
+            flash("Error retrieving suppliers.", 'danger')
+            fornitori = []
+    except sqlite3.Error as e:
+        if connection:
+            connection.rollback()
+        print(f"Database error: {e}")
+        flash("A database error occurred. Please try again.", 'danger')
+        fornitori = []
 
     return render_template('insert.html', fornitori=fornitori, success=success)
 
@@ -205,15 +232,21 @@ def show_fornitori():
     connection.close()
     return render_template('fornitori.html', fornitori=fornitori)
 
+
+
 # Logistics
 @app.route('/logistics')
 def logistics():
     return render_template('logistics.html')
 
+
+
 # Modify
 @app.route('/modify')
 def modify():
     return render_template('modify.html')
+
+
 
 # Cerca un documento per ID
 @app.route('/search_document', methods=['POST'])
@@ -223,23 +256,34 @@ def search_document():
     doc_value = data['doc_value']
 
     connection = get_db_connection()
-    cursor = connection.cursor()
-
-    if doc_type == 'rda':
-        cursor.execute("SELECT * FROM example WHERE rda = ?", (doc_value,))
-    elif doc_type == 'ddt':
-        cursor.execute("SELECT * FROM ddt WHERE id = ?", (doc_value,))
-    else:
+    if connection is None:
+        return jsonify({"error": "Database connection error"}), 500
+    
+    try:
+        cursor = connection.cursor()
+    
+        if doc_type == 'rda':
+            cursor.execute("SELECT * FROM example WHERE rda = ?", (doc_value,))
+        elif doc_type == 'ddt':
+            cursor.execute("SELECT * FROM ddt WHERE id = ?", (doc_value,))
+        else:
+            return jsonify({"error": "Invalid document type"}), 400
+    
+        document = cursor.fetchone()
+    
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify({"error": "Database query error"}), 500
+    finally:
         connection.close()
-        return jsonify({"error": "Tipo di documento non valido"}), 400
+    
+        if document:
+            return jsonify(dict(document)), 200
+        else:
+            return jsonify({"error": "Document not found"}), 404
 
-    document = cursor.fetchone()
-    connection.close()
 
-    if document:
-        return jsonify(dict(document)), 200
-    else:
-        return jsonify({"error": "Documento non trovato"}), 404
+
 
 # Modifica un documento
 @app.route('/modify_document', methods=['POST'])
@@ -249,24 +293,29 @@ def modify_document():
     updated_fields = data['updated_fields']
 
     connection = get_db_connection()
-    cursor = connection.cursor()
-
-    # Costruisci la query di aggiornamento
-    query = "UPDATE example SET "
-    query += ", ".join([f"{key} = ?" for key in updated_fields.keys()])
-    query += " WHERE id = ?"
-    values = list(updated_fields.values()) + [doc_id]
+    if connection is None:
+        return jsonify({"error": "Database connection error"}), 500
 
     try:
+        cursor = connection.cursor()
+
+        # Build the update query
+        query = "UPDATE example SET "
+        query += ", ".join([f"{key} = ?" for key in updated_fields.keys()])
+        query += " WHERE id = ?"
+        values = list(updated_fields.values()) + [doc_id]
+
         cursor.execute(query, values)
         connection.commit()
-        return jsonify({"success": True}), 200
-    except Exception as e:
+    except sqlite3.Error as e:
         connection.rollback()
-        print(f"Errore durante l'aggiornamento: {e}")
+        print(f"Error during update: {e}")
         return jsonify({"error": str(e)}), 500
     finally:
         connection.close()
+
+    return jsonify({"success": True}), 200
+
 
 # Assicurati che la tabella example nel tuo database SQLite abbia effettivamente le colonne che stai cercando di aggiornare. Puoi farlo eseguendo una query per visualizzare la struttura della tabella
 @app.route('/check_table_structure')

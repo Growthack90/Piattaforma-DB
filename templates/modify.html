@@ -1,132 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Modifica/Elimina RDA</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
-    <!-- Style CSS -->   
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_modify.css') }}">
+    <!-- Style CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles_modify.css') }}"
+    />
 
     <script>
-        function navigateToHome() {
-        window.location.href = '/';
-        }
-        function navigateToIndex() {
-        window.location.href = '/index';
-        }
+      function navigateToHome() {
+        window.location.href = "/";
+      }
+      function navigateToIndex() {
+        window.location.href = "/index";
+      }
     </script>
-</head>
-<body>
-
+  </head>
+  <body>
     <!-- Navbar with dropdown hamburger menu -->
     <nav class="navbar navbar-dark">
-        <div class="dropdown">
-            <button class="navbar-toggler" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" onclick="navigateToHome()">Home</a>
-                <a class="dropdown-item" onclick="navigateToIndex()">Operazioni RdA</a>
-                <a class="dropdown-item" href="/show_fornitori">DB Fornitori</a>
-                <a class="dropdown-item" href="/show_rdas">Mostra tutte le RdA</a>
-                <a class="dropdown-item" href="#">Statistiche</a>
-                <a class="dropdown-item" href="#">Contact</a>
-            </div>
-        </div> 
+      <div class="dropdown">
+        <button
+          class="navbar-toggler"
+          type="button"
+          id="dropdownMenuButton"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" onclick="navigateToHome()">Home</a>
+          <a class="dropdown-item" onclick="navigateToIndex()"
+            >Operazioni RdA</a
+          >
+          <a class="dropdown-item" href="/show_fornitori">DB Fornitori</a>
+          <a class="dropdown-item" href="/show_rdas">Mostra tutte le RdA</a>
+          <a class="dropdown-item" href="#">Statistiche</a>
+          <a class="dropdown-item" href="#">Contact</a>
+        </div>
+      </div>
     </nav>
 
     <div class="container my-5">
-        <div class="card p-4">
-            <h2 class="card-title">FORM MODIFICA/ELIMINA</h2>
-<!-- ############################################################################################################################# -->            
-            <form id="document-form">
-                <div class="form-group">
-                    <label for="doc_type">Scegli tipologia di documento da modificare o eliminare</label>
-                    <select class="form-control" id="doc_type" name="doc_type" required>
-                        <option value="" disabled selected>Seleziona tipo di documento</option>
-                        <option value="rda">RdA</option>
-                        <option value="ddt">Info Trasporto DDT</option>
-                    </select>
-                </div>
-                <div class="form-group" id="doc_value_container" style="display: none;">
-                    <label for="doc_value">Inserisci valore del documento</label>
-                    <input type="number" class="form-control" id="doc_value" name="doc_value" required>
-                </div>
-                <button type="button" class="btn btn-danger btn-block" id="search-button" style="display: none;" onclick="searchDocument()">Cerca</button>
-            </form>
-<!-- ############################################################################################################################# -->
-            <div class="info-box" id="info-box" style="display: none;">
-                <h3>INFORMAZIONI DEL DOCUMENTO APPENA SCELTO:</h3>
-                <ul id="document-details"></ul>
-                <button type="button" class="btn btn-warning" onclick="modifyDocument()">Modifica</button>
-                <button type="button" class="btn btn-danger" onclick="deleteDocument()">Elimina</button>
-                <button type="button" class="btn btn-success" onclick="updateDocument()">Aggiorna</button>
-<!-- ############################################################################################################################# -->
-                <div id="update-fields"> <!-- Sezione nascosta di default -->
-                    <h3>MODIFICA CAMPI</h3>
-                    <input type="hidden" id="doc_id">
-                    <div class="form-group">
-                        <label for="rda">RdA</label>
-                        <input type="number" class="form-control" id="rda" name="rda">
-                    </div>
-                    <div class="form-group">
-                        <label for="basket_name">Nome Basket</label>
-                        <input type="text" class="form-control" id="basket_name" name="basket_name">
-                    </div>
-                    <div class="form-group">
-                        <label for="fornitore">Fornitore</label>
-                        <select class="form-control" id="fornitore" name="fornitore">
-                            <option value="" disabled selected>Seleziona un fornitore</option>
-                            {% for fornitore in fornitori %}
-                                <option value="{{ fornitore }}">{{ fornitore }}</option>
-                            {% endfor %}
-                        </select>
-                        <small id="addFornitoreHelp" class="form-text text-muted">Se il fornitore non è presente, aggiungilo</small>
-                        <input type="text" class="form-control mt-2" id="new_fornitore" name="new_fornitore" placeholder="Aggiungi nuovo fornitore">
-                        <button type="button" class="btn btn-primary mt-2" onclick="addFornitore()">Aggiungi Fornitore</button>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="importo_sc">Importo SC</label>
-                        <input type="number" class="form-control" id="importo_sc" name="importo_sc">
-                    </div>
-                    <div class="form-group">
-                        <label for="oda">ODA</label>
-                        <input type="number" class="form-control" id="oda" name="oda">
-                    </div>
-                    <div class="form-group">
-                        <label for="commessa">Commessa</label>
-                        <input type="text" class="form-control" id="commessa" name="commessa">
-                    </div>
-                    <div class="form-group">
-                        <label for="element">Elemento</label>
-                        <input type="text" class="form-control" id="element" name="element">
-                    </div>
-                    <div class="form-group">
-                        <label for="richiedente">Richiedente</label>
-                        <input type="text" class="form-control" id="richiedente" name="richiedente">
-                    </div>
-                    <div class="form-group">
-                        <label for="data_creazione">Data Creazione</label>
-                        <input type="date" class="form-control" id="data_creazione" name="data_creazione">
-                    </div>
-                    <div class="form-group">
-                        <label for="tipologia_acquisto">Tipologia Acquisto</label>
-                        <select class="form-control" id="tipologia_acquisto" name="tipologia_acquisto">
-                            <option value="nullo"></option>
-                            <option value="HW">HW</option>
-                            <option value="SRV">SRV</option>
-                            <option value="Formazione">Formazione</option>
-                            <option value="Licenze">Licenze</option>
-                            <option value="BR">BR</option>
-                        </select>
-                    </div>
-                    <button type="button" class="btn btn-success" onclick="saveChanges()">Salva Modifiche</button>
-                </div>
+      <div class="card p-4">
+        <h2 class="card-title">FORM MODIFICA/ELIMINA</h2>
+        <!-- ############################################################################################################################# -->
+        <form id="document-form">
+          <div class="form-group">
+            <label for="doc_type"
+              >Scegli tipologia di documento da modificare o eliminare</label
+            >
+            <select class="form-control" id="doc_type" name="doc_type" required>
+              <option value="" disabled selected>
+                Seleziona tipo di documento
+              </option>
+              <option value="rda">RdA</option>
+              <option value="ddt">Info Trasporto DDT</option>
+            </select>
+          </div>
+          <div
+            class="form-group"
+            id="doc_value_container"
+            style="display: none"
+          >
+            <label for="doc_value">Inserisci valore del documento</label>
+            <input
+              type="number"
+              class="form-control"
+              id="doc_value"
+              name="doc_value"
+              required
+            />
+          </div>
+          <button
+            type="button"
+            class="btn btn-danger btn-block"
+            id="search-button"
+            style="display: none"
+            onclick="searchDocument()"
+          >
+            Cerca
+          </button>
+        </form>
+        <!-- ############################################################################################################################# -->
+        <div class="info-box" id="info-box" style="display: none">
+          <h3>INFORMAZIONI DEL DOCUMENTO APPENA SCELTO:</h3>
+          <ul id="document-details"></ul>
+          <button
+            type="button"
+            class="btn btn-warning"
+            onclick="modifyDocument()"
+          >
+            Modifica
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            onclick="deleteDocument()"
+          >
+            Elimina
+          </button>
+          <button
+            type="button"
+            class="btn btn-success"
+            onclick="updateDocument()"
+          >
+            Aggiorna
+          </button>
+          <!-- ############################################################################################################################# -->
+          <div id="update-fields">
+            <!-- Sezione nascosta di default -->
+            <h3>MODIFICA CAMPI</h3>
+            <input type="hidden" id="doc_id" />
+            <div class="form-group">
+              <label for="rda">RdA</label>
+              <input type="number" class="form-control" id="rda" name="rda" />
             </div>
+            <div class="form-group">
+              <label for="basket_name">Nome Basket</label>
+              <input
+                type="text"
+                class="form-control"
+                id="basket_name"
+                name="basket_name"
+              />
+            </div>
+            <div class="form-group">
+              <label for="fornitore">Fornitore</label>
+              <select class="form-control" id="fornitore" name="fornitore">
+                <option value="" disabled selected>
+                  Seleziona un fornitore
+                </option>
+                {% for fornitore in fornitori %}
+                <option value="{{ fornitore }}">{{ fornitore }}</option>
+                {% endfor %}
+              </select>
+              <small id="addFornitoreHelp" class="form-text text-muted"
+                >Se il fornitore non è presente, aggiungilo</small
+              >
+              <input
+                type="text"
+                class="form-control mt-2"
+                id="new_fornitore"
+                name="new_fornitore"
+                placeholder="Aggiungi nuovo fornitore"
+              />
+              <button
+                type="button"
+                class="btn btn-primary mt-2"
+                onclick="addFornitore()"
+              >
+                Aggiungi Fornitore
+              </button>
+            </div>
+
+            <div class="form-group">
+              <label for="importo_sc">Importo SC</label>
+              <input
+                type="number"
+                class="form-control"
+                id="importo_sc"
+                name="importo_sc"
+              />
+            </div>
+            <div class="form-group">
+              <label for="oda">ODA</label>
+              <input type="number" class="form-control" id="oda" name="oda" />
+            </div>
+            <div class="form-group">
+              <label for="commessa">Commessa</label>
+              <input
+                type="text"
+                class="form-control"
+                id="commessa"
+                name="commessa"
+              />
+            </div>
+            <div class="form-group">
+              <label for="element">Elemento</label>
+              <input
+                type="text"
+                class="form-control"
+                id="element"
+                name="element"
+              />
+            </div>
+            <div class="form-group">
+              <label for="richiedente">Richiedente</label>
+              <input
+                type="text"
+                class="form-control"
+                id="richiedente"
+                name="richiedente"
+              />
+            </div>
+            <div class="form-group">
+              <label for="data_creazione">Data Creazione</label>
+              <input
+                type="date"
+                class="form-control"
+                id="data_creazione"
+                name="data_creazione"
+              />
+            </div>
+            <div class="form-group">
+              <label for="tipologia_acquisto">Tipologia Acquisto</label>
+              <select
+                class="form-control"
+                id="tipologia_acquisto"
+                name="tipologia_acquisto"
+              >
+                <option value="nullo"></option>
+                <option value="HW">HW</option>
+                <option value="SRV">SRV</option>
+                <option value="Formazione">Formazione</option>
+                <option value="Licenze">Licenze</option>
+                <option value="BR">BR</option>
+              </select>
+            </div>
+            <button
+              type="button"
+              class="btn btn-success"
+              onclick="saveChanges()"
+            >
+              Salva Modifiche
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -134,272 +245,293 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        let originalData = {};
+      let originalData = {};
 
-        document.getElementById('doc_type').addEventListener('change', function() {
-            var docType = this.value;
-            var docValueContainer = document.getElementById('doc_value_container');
-            var searchButton = document.getElementById('search-button');
-            if (docType) {
-                docValueContainer.style.display = 'block';
-                searchButton.style.display = 'block';
-            } else {
-                docValueContainer.style.display = 'none';
-                searchButton.style.display = 'none';
-            }
+      document
+        .getElementById("doc_type")
+        .addEventListener("change", function () {
+          var docType = this.value;
+          var docValueContainer = document.getElementById(
+            "doc_value_container"
+          );
+          var searchButton = document.getElementById("search-button");
+          if (docType) {
+            docValueContainer.style.display = "block";
+            searchButton.style.display = "block";
+          } else {
+            docValueContainer.style.display = "none";
+            searchButton.style.display = "none";
+          }
         });
 
+      // Search document
+      function searchDocument() {
+        var docType = document.getElementById("doc_type").value;
+        var docValue = document.getElementById("doc_value").value;
 
-
-
-
-// Search document
-function searchDocument() {
-    var docType = document.getElementById('doc_type').value;
-    var docValue = document.getElementById('doc_value').value;
-
-    $.ajax({
-        url: '/search_document',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ doc_type: docType, doc_value: docValue }),
-        success: function(response) {
-            $('#info-box').show();
-            $('#document-details').empty();
-            $('#doc_id').val(response.id); 
-            originalData = response; 
+        $.ajax({
+          url: "/search_document",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ doc_type: docType, doc_value: docValue }),
+          success: function (response) {
+            $("#info-box").show();
+            $("#document-details").empty();
+            $("#doc_id").val(response.id);
+            originalData = response;
 
             // Definisci l'ordine dei campi desiderato
             var fieldOrder = [
-                'rda', 'basket_name', 'fornitore', 'importo_sc', 'oda', 'commessa', 
-                'element', 'richiedente', 'data_creazione', 'tipologia_acquisto'
+              "rda",
+              "basket_name",
+              "fornitore",
+              "importo_sc",
+              "oda",
+              "commessa",
+              "element",
+              "richiedente",
+              "data_creazione",
+              "tipologia_acquisto",
             ];
 
             // Itera sull'array fieldOrder per estrarre i valori nell'ordine corretto
             for (var i = 0; i < fieldOrder.length; i++) {
-                var key = fieldOrder[i];
-                $('#' + key).val(response[key]); 
-                $('#document-details').append('<li>' + key + ': ' + response[key] + '</li>');
+              var key = fieldOrder[i];
+              $("#" + key).val(response[key]);
+              $("#document-details").append(
+                "<li>" + key + ": " + response[key] + "</li>"
+              );
             }
 
-            $('#fornitore').val(response.fornitore); 
-            $('#tipologia_acquisto').val(response.tipologia_acquisto);
-            $('#update-fields').show();
-            loadFornitori(response.fornitore); 
-        },
-        error: function(xhr) {
-            alert('Documento non trovato');
-        }
-    });
-}
+            $("#fornitore").val(response.fornitore);
+            $("#tipologia_acquisto").val(response.tipologia_acquisto);
+            $("#update-fields").show();
+            loadFornitori(response.fornitore);
+          },
+          error: function (xhr) {
+            alert("Documento non trovato");
+          },
+        });
+      }
 
+      // Save changes
+      function saveChanges() {
+        var docId = $("#doc_id").val();
 
+        // Ottieni i nuovi valori dei campi
+        var updatedFields = {};
+        $("#update-fields input, #update-fields select").each(function () {
+          var fieldName = $(this).attr("name");
+          var newValue = $(this).val().trim();
+          var originalValue = originalData[fieldName];
 
-        // Save changes
-        function saveChanges() {
-            var docId = $('#doc_id').val();
-            
-            // Ottieni i nuovi valori dei campi
-            var updatedFields = {};
-            $('#update-fields input, #update-fields select').each(function() {
-                var fieldName = $(this).attr('name');
-                var newValue = $(this).val().trim();
-                var originalValue = originalData[fieldName];
-                
-                // Verifica se il campo è presente nel database
-                if (originalValue !== undefined && newValue !== originalValue) {
-                    updatedFields[fieldName] = newValue;
-                } else if (originalValue === undefined) {
-                    console.warn('Campo non trovato nel database:', fieldName);
-                }
-            });
+          // Verifica se il campo è presente nel database
+          if (originalValue !== undefined && newValue !== originalValue) {
+            updatedFields[fieldName] = newValue;
+          } else if (originalValue === undefined) {
+            console.warn("Campo non trovato nel database:", fieldName);
+          }
+        });
 
-            if (Object.keys(updatedFields).length === 0) {
-                alert('Nessun campo modificato');
-                return;
-            }
-
-            $('#document-details').empty();  // Svuota l'area dei dettagli
-            for (var key in updatedFields) {
-                originalData[key] = updatedFields[key];  // Aggiorna i dati originali
-                $('#document-details').append('<li>' + key + ': ' + updatedFields[key] + '</li>');  // Mostra i nuovi dettagli
-            }
-
-
-            $.ajax({
-                url: '/modify_document',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ id: docId, updated_fields: updatedFields }),
-                success: function(response) {
-                    alert('Documento modificato con successo');
-                },
-                error: function(xhr) {
-                    console.error('Errore nella modifica del documento:', xhr.responseText);
-                    alert('Errore nella modifica del documento: ' + xhr.responseText);
-                }
-            });
+        if (Object.keys(updatedFields).length === 0) {
+          alert("Nessun campo modificato");
+          return;
         }
 
-
-        // Modify document
-        function modifyDocument() {
-            var updateFields = document.getElementById("update-fields");
-            if (updateFields.style.display === "none") {
-                updateFields.style.display = "block"; // Mostra i campi
-            } else {
-                updateFields.style.display = "none"; // Nascondi i campi
-            }
+        $("#document-details").empty(); // Svuota l'area dei dettagli
+        for (var key in updatedFields) {
+          originalData[key] = updatedFields[key]; // Aggiorna i dati originali
+          $("#document-details").append(
+            "<li>" + key + ": " + updatedFields[key] + "</li>"
+          ); // Mostra i nuovi dettagli
         }
 
+        $.ajax({
+          url: "/modify_document",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ id: docId, updated_fields: updatedFields }),
+          success: function (response) {
+            alert("Documento modificato con successo");
+          },
+          error: function (xhr) {
+            console.error(
+              "Errore nella modifica del documento:",
+              xhr.responseText
+            );
+            alert("Errore nella modifica del documento: " + xhr.responseText);
+          },
+        });
+      }
 
-        // Delete document
-        function deleteDocument() {
-        var docId = $('#doc_id').val();
-        var confirmation = window.confirm("Sei sicuro di voler cancellare il documento?");
-        
+      // Modify document
+      function modifyDocument() {
+        var updateFields = document.getElementById("update-fields");
+        if (updateFields.style.display === "none") {
+          updateFields.style.display = "block"; // Mostra i campi
+        } else {
+          updateFields.style.display = "none"; // Nascondi i campi
+        }
+      }
+
+      // Delete document
+      function deleteDocument() {
+        var docId = $("#doc_id").val();
+        var confirmation = window.confirm(
+          "Sei sicuro di voler cancellare il documento?"
+        );
+
         if (confirmation) {
-            $.ajax({
-                url: '/delete_document',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ id: docId }),
-                success: function(response) {
-                    alert('Documento eliminato con successo');
-                    $('#info-box').hide();
-                },
-                error: function(xhr) {
-                    alert('Errore nella cancellazione del documento: ' + xhr.responseText);
-                }
-            });
+          $.ajax({
+            url: "/delete_document",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ id: docId }),
+            success: function (response) {
+              alert("Documento eliminato con successo");
+              $("#info-box").hide();
+            },
+            error: function (xhr) {
+              alert(
+                "Errore nella cancellazione del documento: " + xhr.responseText
+              );
+            },
+          });
         }
-        }
+      }
 
+      function updateDocument() {
+        var docId = $("#doc_id").val();
 
+        // Ottieni i nuovi valori dei campi, mantenendo l'ordine
+        var updatedFields = {};
+        $("#update-fields .form-group").each(function () {
+          // Itera sui .form-group
+          var inputField = $(this).find("input, select"); // Trova input o select all'interno
+          var fieldName = inputField.attr("name");
+          var newValue = inputField.val().trim();
+          var originalValue = originalData[fieldName];
 
-        function updateDocument() {
-    var docId = $('#doc_id').val();
+          if (fieldName && newValue !== undefined && newValue !== "") {
+            updatedFields[fieldName] = newValue || originalValue;
+          }
+        });
 
-    // Ottieni i nuovi valori dei campi, mantenendo l'ordine
-    var updatedFields = {};
-    $('#update-fields .form-group').each(function() { // Itera sui .form-group
-        var inputField = $(this).find('input, select'); // Trova input o select all'interno
-        var fieldName = inputField.attr('name');
-        var newValue = inputField.val().trim();
-        var originalValue = originalData[fieldName];
-
-        if (fieldName && newValue !== undefined && newValue !== '') {
-            updatedFields[fieldName] = newValue || originalValue; 
-        }
-    });
-
-    // Manda la richiesta al server per modificare il documento
-    $.ajax({
-        url: '/modify_document',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ id: docId, updated_fields: updatedFields }),
-        success: function(response) {
-            alert('Documento aggiornato con successo');
+        // Manda la richiesta al server per modificare il documento
+        $.ajax({
+          url: "/modify_document",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ id: docId, updated_fields: updatedFields }),
+          success: function (response) {
+            alert("Documento aggiornato con successo");
 
             // Aggiorna l'area delle informazioni mantenendo l'ordine
-            $('#document-details').empty(); 
+            $("#document-details").empty();
 
             // Itera sui .form-group per mantenere l'ordine
-            $('#update-fields .form-group').each(function() { 
-                var inputField = $(this).find('input, select');
-                var fieldName = inputField.attr('name');
-                var valueToShow = updatedFields[fieldName] || originalData[fieldName];
-                $('#document-details').append('<li>' + fieldName + ': ' + valueToShow + '</li>'); 
+            $("#update-fields .form-group").each(function () {
+              var inputField = $(this).find("input, select");
+              var fieldName = inputField.attr("name");
+              var valueToShow =
+                updatedFields[fieldName] || originalData[fieldName];
+              $("#document-details").append(
+                "<li>" + fieldName + ": " + valueToShow + "</li>"
+              );
             });
 
             // Aggiorna i dati originali con quelli modificati
-            originalData = { ...originalData, ...updatedFields }; 
-        },
-        error: function(xhr) {
-            console.error('Errore nell\'aggiornamento del documento:', xhr.responseText);
-            alert('Errore nell\'aggiornamento del documento: ' + xhr.responseText);
-        }
-    });
-}
+            originalData = { ...originalData, ...updatedFields };
+          },
+          error: function (xhr) {
+            console.error(
+              "Errore nell'aggiornamento del documento:",
+              xhr.responseText
+            );
+            alert(
+              "Errore nell'aggiornamento del documento: " + xhr.responseText
+            );
+          },
+        });
+      }
 
+      // Load Fornitori
+      function loadFornitori(selectedFornitore) {
+        $.ajax({
+          url: "/get_fornitori",
+          type: "GET",
+          success: function (response) {
+            const fornitoreSelect = document.getElementById("fornitore");
 
+            // Pulire le opzioni esistenti e aggiungere l'opzione selezionata se non presente
+            fornitoreSelect.innerHTML =
+              '<option value="" disabled>Seleziona un fornitore</option>';
+            let foundSelected = false;
+            response.fornitori.forEach(function (fornitore) {
+              const option = document.createElement("option");
+              option.value = fornitore;
+              option.text = fornitore;
 
+              if (fornitore === selectedFornitore) {
+                option.selected = true;
+                foundSelected = true;
+              }
 
-        // Load Fornitori         
-        function loadFornitori(selectedFornitore) {
-            $.ajax({
-                url: '/get_fornitori',
-                type: 'GET',
-                success: function(response) {
-                    const fornitoreSelect = document.getElementById('fornitore');
-        
-                    // Pulire le opzioni esistenti e aggiungere l'opzione selezionata se non presente
-                    fornitoreSelect.innerHTML = '<option value="" disabled>Seleziona un fornitore</option>'; 
-                    let foundSelected = false;
-                    response.fornitori.forEach(function(fornitore) {
-                        const option = document.createElement('option');
-                        option.value = fornitore;
-                        option.text = fornitore;
-        
-                        if (fornitore === selectedFornitore) {
-                            option.selected = true;
-                            foundSelected = true;
-                        }
-        
-                        fornitoreSelect.appendChild(option);
-                    });
-        
-                    // Se il fornitore selezionato non è trovato, aggiungilo come opzione
-                    if (selectedFornitore && !foundSelected) {
-                        const option = document.createElement('option');
-                        option.value = selectedFornitore;
-                        option.text = selectedFornitore;
-                        option.selected = true;
-                        fornitoreSelect.appendChild(option);
-                    }
-                },
-                error: function(xhr) {
-                    console.error('Errore nel recupero dei fornitori:', xhr.responseText);
-                }
+              fornitoreSelect.appendChild(option);
+            });
+
+            // Se il fornitore selezionato non è trovato, aggiungilo come opzione
+            if (selectedFornitore && !foundSelected) {
+              const option = document.createElement("option");
+              option.value = selectedFornitore;
+              option.text = selectedFornitore;
+              option.selected = true;
+              fornitoreSelect.appendChild(option);
+            }
+          },
+          error: function (xhr) {
+            console.error(
+              "Errore nel recupero dei fornitori:",
+              xhr.responseText
+            );
+          },
+        });
+      }
+
+      // Aggiungi Fornitore
+      function addFornitore() {
+        const newFornitoreInput = document.getElementById("new_fornitore");
+        const fornitoreSelect = document.getElementById("fornitore");
+        const newFornitore = newFornitoreInput.value.trim();
+
+        if (newFornitore) {
+          // Invio del nuovo fornitore al server per salvarlo nel database
+          fetch("/add_fornitore", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ fornitore: newFornitore }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                // Aggiunta del nuovo fornitore al menu a tendina
+                const option = document.createElement("option");
+                option.value = newFornitore;
+                option.text = newFornitore;
+                option.selected = true;
+                fornitoreSelect.appendChild(option);
+                newFornitoreInput.value = "";
+              } else {
+                alert("Errore nell'aggiungere il fornitore");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
             });
         }
-
-
-        // Aggiungi Fornitore      
-        function addFornitore() {
-            const newFornitoreInput = document.getElementById('new_fornitore');
-            const fornitoreSelect = document.getElementById('fornitore');
-            const newFornitore = newFornitoreInput.value.trim();
-
-            if (newFornitore) {
-                // Invio del nuovo fornitore al server per salvarlo nel database
-                fetch('/add_fornitore', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ fornitore: newFornitore }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Aggiunta del nuovo fornitore al menu a tendina
-                        const option = document.createElement('option');
-                        option.value = newFornitore;
-                        option.text = newFornitore;
-                        option.selected = true;
-                        fornitoreSelect.appendChild(option);
-                        newFornitoreInput.value = '';
-                    } else {
-                        alert('Errore nell\'aggiungere il fornitore');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-            }
-        }
+      }
     </script>
-</body>
+  </body>
 </html>
