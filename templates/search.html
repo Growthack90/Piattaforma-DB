@@ -22,7 +22,28 @@
             padding: 20px;
             margin-top: 20px;
         }
+        .search-result table {
+            width: 100%;
+            border-collapse: collapse; /* Collapse borders into single lines */
+            margin-top: 20px; /* Add some space above the table */
+        }    
+        .search-result th, .search-result td {
+            padding: 12px 15px; /* Add padding to cells */
+            text-align: left; /* Align text to the left */
+            border-bottom: 1px solid #ddd; /* Add a subtle border between rows */
+        }        
+        .search-result th {
+            background-color: #f0f0f0; /* Light gray background for header cells */
+            font-weight: bold; /* Make header text bold */
+        }        
+        .search-result tr:nth-child(even) {
+            background-color: #f5f5f5; /* Alternate row colors for better readability */
+        }        
+        .search-result tr:hover {
+            background-color: #e0e0e0; /* Highlight row on hover */
+        }
     </style>
+
     <script>
         function navigateToHome() {
         window.location.href = '/';
@@ -54,12 +75,12 @@
     <div class="container my-5">
         <div class="card p-4">
             <h2 class="card-title">FORM PER RICERCARE RAPIDAMENTE</h2>
-            <form action="#">
+            <form action="/search_results" method="get">
                 <div class="form-group">
                     <label for="search_field">Seleziona campo di ricerca:</label>
                     <select class="form-control" id="search_field" name="search_field">
                         <option value="vuoto"></option>
-                        <option value="rda_number">Numero RDA</option>
+                        <option value="rda">Numero RDA</option>
                         <option value="basket_name">Basket Name</option>
                         <option value="fornitore">Fornitore</option>
                         <option value="commessa">Commessa</option>
@@ -71,17 +92,99 @@
                 </div>
                 <button type="submit" class="btn btn-danger btn-block">Cerca</button>
             </form>
-            <div class="search-result">
-                RISULTATI DELLA RICERCA:
-                <ul>
-                    <li>Numero RDA: 12345</li>
-                    <li>Basket Name: Nome del Basket</li>
-                    <li>Fornitore: Nome del Fornitore</li>
-                    <li>Commessa: Nome della Commessa</li>
-                </ul>
-            </div>
+
+            <!-- RISULTATI DELLA RICERCA -->
+                    
+            <div class="search-result"> 
+                <div id="search-results-list">
+                    <h2>Search Results</h2> 
+                    {% if results %}
+                        <table class="table table-striped"> 
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>RDA Number</th>
+                                    <th>Basket Name</th>
+                                    <th>Supplier</th>
+                                    <th>Importo SC</th>
+                                    <th>ODA</th>
+                                    <th>Commessa</th>
+                                    <th>Element</th>
+                                    <th>Richiedente</th>
+                                    <th>Data Creazione</th>
+                                    <th>Tipologia Acquisto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in results %}
+                                    <tr>
+                                        <td>{{ row['id'] }}</td>
+                                        <td>{{ row['rda'] }}</td>
+                                        <td>{{ row['basket_name'] }}</td>
+                                        <td>{{ row['fornitore'] }}</td>
+                                        <td>{{ row['importo_sc'] }}</td>
+                                        <td>{{ row['oda'] }}</td>
+                                        <td>{{ row['commessa'] }}</td>
+                                        <td>{{ row['element'] }}</td>
+                                        <td>{{ row['richiedente'] }}</td>
+                                        <td>{{ row['data_creazione'] }}</td>
+                                        <td>{{ row['tipologia_acquisto'] }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>No results found.</p>
+                    {% endif %}
+                </div>
+            </div> 
+
         </div>
     </div>
+
+    <!-- Implementata funzione JavaScript per inviare la richiesta di ricerca AJAX al server e aggiornare la lista dei risultati -->
+
+    <script>
+        const searchForm = document.querySelector('form');
+        const resultsList = document.getElementById('search-results-list');
+    
+        searchForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+    
+            const searchField = document.getElementById('search_field').value;
+            const searchValue = document.getElementById('search_value').value;
+    
+            // Send AJAX request
+            fetch(`/search_results?search_field=${searchField}&search_value=${searchValue}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Clear previous results
+                    resultsList.innerHTML = '';
+    
+                    if (data.error) {
+                        // Display error message
+                        resultsList.innerHTML = `<li>${data.error}</li>`;
+                    } else {
+                        // Display search results
+                        data.forEach(row => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = `Numero RDA: ${row.rda}, Basket Name: ${row.basket_name}, Fornitore: ${row.fornitore}, Commessa: ${row.commessa}`; 
+                            resultsList.appendChild(listItem);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching search results:', error);
+                    resultsList.innerHTML = '<li>An error occurred while fetching results.</li>';
+                });
+        });
+    </script>
+
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>

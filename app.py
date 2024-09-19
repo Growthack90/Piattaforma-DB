@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from userModel import User, users
 
@@ -124,6 +124,15 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
+
+
+
+# Register
+@app.route('/register')
+def register():
+    return render_template('home.html', username=current_user.id)
+
+
 
 # Index
 @app.route('/index')
@@ -349,6 +358,8 @@ def delete_document():
 
     return jsonify({"success": True}), 200
 
+
+
 # Restituire elenco fornitori
 @app.route('/get_fornitori', methods=['GET'])
 def get_fornitori():
@@ -359,10 +370,58 @@ def get_fornitori():
     connection.close()
     return jsonify({"fornitori": fornitori})
 
+
+
+
 # Search
-@app.route('/search')
+@app.route('/search', methods=['GET', 'POST'])
 def search():
+    if request.method == 'POST':
+        search_field = request.form['search_field']
+        search_value = request.form['search_value']
+
+        if search_field and search_value:
+            connection = get_db_connection()
+            cursor = connection.cursor()
+
+            # Dynamically construct the SQL query
+            query = f"SELECT * FROM example WHERE {search_field} = ?"
+            cursor.execute(query, (search_value,))
+            results = cursor.fetchall()
+            connection.close()
+
+            return render_template('search.html', results=results)
+
     return render_template('search.html')
+
+
+
+# Search Results
+@app.route('/search_results', methods=['GET'])
+def search_results():
+    search_field = request.args.get('search_field')
+    search_value = request.args.get('search_value')
+
+    if not search_field or not search_value:
+        return jsonify({"error": "Please select a search field and enter a value."}), 400 
+
+    connection = get_db_connection()
+    if connection is None:
+        return jsonify({"error": "Database connection error"}), 500
+
+    try:
+        cursor = connection.cursor()
+        query = f"SELECT * FROM example WHERE {search_field} = ?"
+        cursor.execute(query, (search_value,))
+        results = cursor.fetchall()
+        return jsonify([dict(row) for row in results]), 200  # Return results as JSON
+
+    except sqlite3.Error as e:
+        print(f"Database error during search: {e}")
+        return jsonify({"error": "An error occurred during the search. Please try again."}), 500
+    finally:
+        connection.close()
+
 
 
 # non dimenticare di cambiarlo in False prima di caricarlo sull'host per evitare qualsiasi attacco da parte di hacker
