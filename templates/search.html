@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cerca RDA</title>
-    <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -22,40 +21,33 @@
             padding: 20px;
             margin-top: 20px;
         }
-        .search-result table {
+        #search-results {
+            margin-top: 20px;
+        }
+
+        #search-results table {
             width: 100%;
-            border-collapse: collapse; /* Collapse borders into single lines */
-            margin-top: 20px; /* Add some space above the table */
-        }    
-        .search-result th, .search-result td {
-            padding: 12px 15px; /* Add padding to cells */
-            text-align: left; /* Align text to the left */
-            border-bottom: 1px solid #ddd; /* Add a subtle border between rows */
-        }        
-        .search-result th {
-            background-color: #f0f0f0; /* Light gray background for header cells */
-            font-weight: bold; /* Make header text bold */
-        }        
-        .search-result tr:nth-child(even) {
-            background-color: #f5f5f5; /* Alternate row colors for better readability */
-        }        
-        .search-result tr:hover {
-            background-color: #e0e0e0; /* Highlight row on hover */
+            border-collapse: collapse;
+        }
+
+        #search-results th, #search-results td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
         }
     </style>
 
     <script>
         function navigateToHome() {
-        window.location.href = '/';
+            window.location.href = '/';
         }
         function navigateToIndex() {
-        window.location.href = '/index';
+            window.location.href = '/index';
         }
     </script>
 </head>
 <body>
 
-    <!-- Navbar with dropdown hamburger menu -->
     <nav class="navbar navbar-dark">
         <div class="dropdown">
             <button class="navbar-toggler" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -93,56 +85,23 @@
                 <button type="submit" class="btn btn-danger btn-block">Cerca</button>
             </form>
 
-            <!-- RISULTATI DELLA RICERCA -->
-                    
-            <div class="search-result"> 
-                <div id="search-results-list">
-                    <h2>Search Results</h2> 
-                    {% if results %}
-                        <table class="table table-striped"> 
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>RDA Number</th>
-                                    <th>Basket Name</th>
-                                    <th>Supplier</th>
-                                    <th>Importo SC</th>
-                                    <th>ODA</th>
-                                    <th>Commessa</th>
-                                    <th>Element</th>
-                                    <th>Richiedente</th>
-                                    <th>Data Creazione</th>
-                                    <th>Tipologia Acquisto</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for row in results %}
-                                    <tr>
-                                        <td>{{ row['id'] }}</td>
-                                        <td>{{ row['rda'] }}</td>
-                                        <td>{{ row['basket_name'] }}</td>
-                                        <td>{{ row['fornitore'] }}</td>
-                                        <td>{{ row['importo_sc'] }}</td>
-                                        <td>{{ row['oda'] }}</td>
-                                        <td>{{ row['commessa'] }}</td>
-                                        <td>{{ row['element'] }}</td>
-                                        <td>{{ row['richiedente'] }}</td>
-                                        <td>{{ row['data_creazione'] }}</td>
-                                        <td>{{ row['tipologia_acquisto'] }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% else %}
-                        <p>No results found.</p>
-                    {% endif %}
-                </div>
-            </div> 
+            <div id="search-results">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Numero RDA</th>
+                            <th>Basket Name</th>
+                            <th>Fornitore</th>
+                            <th>Commessa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="search-results-list">
+                        </tbody>
+                </table>
+            </div>
 
         </div>
     </div>
-
-    <!-- Implementata funzione JavaScript per inviare la richiesta di ricerca AJAX al server e aggiornare la lista dei risultati -->
 
     <script>
         const searchForm = document.querySelector('form');
@@ -164,28 +123,32 @@
                 })
                 .then(data => {
                     // Clear previous results
-                    resultsList.innerHTML = '';
-    
+                    resultsList.innerHTML = ''; 
+
                     if (data.error) {
                         // Display error message
-                        resultsList.innerHTML = `<li>${data.error}</li>`;
+                        resultsList.innerHTML = `<tr><td colspan="4">${data.error}</td></tr>`;
                     } else {
-                        // Display search results
+                        // Display search results in table rows
                         data.forEach(row => {
-                            const listItem = document.createElement('li');
-                            listItem.textContent = `Numero RDA: ${row.rda}, Basket Name: ${row.basket_name}, Fornitore: ${row.fornitore}, Commessa: ${row.commessa}`; 
-                            resultsList.appendChild(listItem);
+                            const tableRow = document.createElement('tr');
+                            tableRow.innerHTML = `
+                                <td>${row.rda}</td>
+                                <td>${row.basket_name}</td>
+                                <td>${row.fornitore}</td>
+                                <td>${row.commessa}</td>
+                            `;
+                            resultsList.appendChild(tableRow);
                         });
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching search results:', error);
-                    resultsList.innerHTML = '<li>An error occurred while fetching results.</li>';
+                    resultsList.innerHTML = '<tr><td colspan="4">An error occurred while fetching results.</td></tr>';
                 });
         });
     </script>
 
-    <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
