@@ -4,9 +4,7 @@ __pycache__/
 
 .vscode/
 
-database-rda.db
-
-fornitori.db
+*.db
 
 init_script.py
 

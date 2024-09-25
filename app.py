@@ -20,7 +20,7 @@ def load_user(username):
     return User.get(username)
 
 
-# STRUTTURA E CONNESSIONE DB
+# CONNESSIONE DB RDA
 # Creazione e comunicazione con il database RdA (con aggiunta di una corretta gestione degli errori alle query del database per rilevare eccezioni e impedire l'arresto anomalo dell'applicazione)
 def get_db_connection():
   try:
@@ -31,6 +31,8 @@ def get_db_connection():
       print(f"Database connection error: {e}")
       return None  # Alternatively, raise a custom exception or handle it in the calling function.
 
+
+# CONNESSIONE DB FORNITORI
 # Creazione e comunicazione con il database fornitori (con aggiunta di una corretta gestione degli errori alle query del database per rilevare eccezioni e impedire l'arresto anomalo dell'applicazione)
 def get_fornitori_db_connection():
   try:
@@ -41,6 +43,19 @@ def get_fornitori_db_connection():
     print(f"Fornitori database connection error: {e}")
   return None
 
+
+# CONNESSIONE DB DDT
+def get_ddt_db_connection():
+    try:
+        connection = sqlite3.connect("ddt.db")
+        connection.row_factory = sqlite3.Row
+        return connection
+    except sqlite3.Error as e:
+        print(f"DDT database connection error: {e}")
+        return None
+
+
+# INIZIALIZZAZIONE STRUTTURA DB FORNITORI
 # Crea la struttura dei database se non esiste
 def init_fornitori_db():
     connection = get_fornitori_db_connection()
@@ -54,6 +69,8 @@ def init_fornitori_db():
     connection.commit()
     connection.close()
 
+
+# INIZIALIZZAZIONE STRUTTURA DB RDA
 def init_db():
     # Database RdA
     connection = get_db_connection()
@@ -75,33 +92,55 @@ def init_db():
         tipologia_acquisto TEXT NOT NULL
     )
     """)
-
-    # # Tabella ddt (se esiste)
-    # cursor.execute("""
-    # CREATE TABLE IF NOT EXISTS ddt (
-    #     id INTEGER PRIMARY KEY,
-    #     field1 TEXT NOT NULL,
-    #     field2 TEXT NOT NULL
-    #     -- Aggiungi altri campi secondo le tue necessità
-    # )
-    # """)
-
     connection.commit()
     connection.close()
 
-    # Database Fornitori
-    init_fornitori_db()
 
+# INIZIALIZZAZIONE DB DDT
+def init_ddt_db():
+    connection = get_ddt_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS ddt (
+        id INTEGER PRIMARY KEY,
+        costo_unitario TEXT NOT NULL,
+        quantita TEXT NOT NULL,
+        ubicazione TEXT NOT NULL,
+        descrizione TEXT NOT NULL,
+        ddt TEXT NOT NULL,
+        data_ordine TEXT NOT NULL,
+        arrivato TEXT NOT NULL,
+        data_arrivo_ordine TEXT NOT NULL
+    )
+    """)
+    connection.commit()
+    connection.close()
+
+
+
+# Database Fornitori
+init_fornitori_db()
+
+# Database RdA
 init_db()
+
+# Database DDT
+init_ddt_db()
 
 # # Controllare se il database è stato creato con successo. Se non presente alcun dato nel database il valore di ritorno è "0"
 # print(connection.total_changes)
+
+
+############################################################################################################
+# CREAZIONE ENDPOINT
+############################################################################################################
 
 # Home
 @app.route('/')
 @login_required
 def home():
     return render_template('home.html', username=current_user.id)
+
 
 # Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -118,6 +157,7 @@ def login():
             flash('Invalid credentials, please try again.', 'danger')
     return render_template('login.html')
 
+
 # Logout
 @app.route('/logout')
 def logout():
@@ -126,12 +166,10 @@ def logout():
     return redirect(url_for('login'))
 
 
-
 # Register
 @app.route('/register')
 def register():
     return render_template('home.html', username=current_user.id)
-
 
 
 # Index
@@ -139,6 +177,7 @@ def register():
 @login_required
 def index():
     return render_template('index.html')
+
 
 # Insert
 @app.route('/insert', methods=['GET', 'POST'])
@@ -206,6 +245,7 @@ def insert():
 
     return render_template('insert.html', fornitori=fornitori, success=success)
 
+
 # Show rdas
 @app.route('/show_rdas')
 def show_rdas():
@@ -215,6 +255,7 @@ def show_rdas():
     rdas = cursor.fetchall()
     connection.close()
     return render_template('rdas.html', rdas=rdas)
+
 
 # Add fornitori
 @app.route('/add_fornitore', methods=['POST'])
@@ -232,6 +273,7 @@ def add_fornitore():
         return {"success": True}
     return {"success": False}, 400
 
+
 # Show fornitori
 @app.route('/show_fornitori')
 def show_fornitori():
@@ -243,19 +285,16 @@ def show_fornitori():
     return render_template('fornitori.html', fornitori=fornitori)
 
 
-
 # Logistics
 @app.route('/logistics')
 def logistics():
     return render_template('logistics.html')
 
 
-
 # Modify
 @app.route('/modify')
 def modify():
     return render_template('modify.html')
-
 
 
 # Cerca un documento per ID
@@ -294,7 +333,6 @@ def search_document():
 
 
 
-
 # Modifica un documento
 @app.route('/modify_document', methods=['POST'])
 def modify_document():
@@ -327,6 +365,7 @@ def modify_document():
     return jsonify({"success": True}), 200
 
 
+
 # Assicurati che la tabella example nel tuo database SQLite abbia effettivamente le colonne che stai cercando di aggiornare. Puoi farlo eseguendo una query per visualizzare la struttura della tabella
 @app.route('/check_table_structure')
 def check_table_structure():
@@ -336,6 +375,7 @@ def check_table_structure():
     columns = cursor.fetchall()
     connection.close()
     return jsonify([dict(column) for column in columns]), 200
+
 
 # Elimina un documento
 @app.route('/delete_document', methods=['POST'])
@@ -369,7 +409,6 @@ def get_fornitori():
     fornitori = [row['fornitore'] for row in cursor.fetchall()]
     connection.close()
     return jsonify({"fornitori": fornitori})
-
 
 
 
