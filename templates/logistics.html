@@ -42,7 +42,7 @@
     <div class="container my-5">
         <div class="card p-4">
             <h2 class="card-title">Form per inserire il DDT</h2>
-            <form action="#">
+            <form action="/insert_ddt" method="POST">
                 <div class="form-group">
                     <label for="costo_unitario">COSTO UNITARIO (NN)</label>
                     <input type="text" class="form-control" id="costo_unitario" name="costo_unitario" required>
@@ -88,6 +88,7 @@
                 </div>
                 <button type="submit" class="btn btn-danger btn-block">Submit</button>
             </form>
+            <a href="/" class="btn btn-primary mt-4">Torna alla Home</a>
         </div>
     </div>
     <!-- Bootstrap JS and dependencies -->

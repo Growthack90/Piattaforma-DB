@@ -246,6 +246,48 @@ def insert():
     return render_template('insert.html', fornitori=fornitori, success=success)
 
 
+# Insert DDT
+@app.route('/insert_ddt', methods=['POST'])
+def insert_ddt():
+    if request.method == 'POST':
+        costo_unitario = request.form['costo_unitario']
+        quantita = request.form['quantita']
+        ubicazione = request.form['ubicazione']
+        descrizione = request.form['descrizione']
+        ddt = request.form['ddt']
+        data_ordine = request.form['data_ordine']
+        arrivato = request.form['stato_arrivato']  # Nota: usa 'stato_arrivato' come nel form
+        data_arrivo_ordine = request.form['data_arrivo_ordine']
+
+        connection = get_ddt_db_connection()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute("""
+                INSERT INTO ddt (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, arrivato, data_arrivo_ordine)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, arrivato, data_arrivo_ordine))
+            connection.commit()
+            connection.close()
+            flash("DDT inserito con successo!", "success")
+        else:
+            flash("Errore di connessione al database DDT.", "danger")
+
+    return redirect(url_for('logistics'))  # Reindirizza alla pagina 'logistics' o dove preferisci
+
+
+
+# Show ddt
+@app.route('/show_ddts')
+def show_ddts():
+    connection = get_ddt_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM ddt")
+    ddts = cursor.fetchall()
+    connection.close()
+    return render_template('ddt.html', ddts=ddts)
+
+
+
 # Show rdas
 @app.route('/show_rdas')
 def show_rdas():
@@ -255,6 +297,25 @@ def show_rdas():
     rdas = cursor.fetchall()
     connection.close()
     return render_template('rdas.html', rdas=rdas)
+
+
+
+# Add ddt
+@app.route('/add_ddt', methods=['POST'])
+def add_ddt():
+    data = request.get_json()
+    new_ddt = data.get('ddt')
+
+    if new_ddt:
+        connection = get_ddt_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("INSERT OR IGNORE INTO ddt (fornitore) VALUES (?)", (new_ddt,))
+        connection.commit()
+        connection.close()
+
+        return {"success": True}
+    return {"success": False}, 400
+
 
 
 # Add fornitori
