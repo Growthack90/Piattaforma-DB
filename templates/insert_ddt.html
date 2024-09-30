@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inserisci nuova rdA</title>
+    <title>Inserisci DDT</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -38,23 +38,57 @@
             </div>
         </div> 
     </nav>
-    
+
     <div class="container my-5">
         <div class="card p-4">
-            <h2 class="card-title">Form per inserire tutti i campi del DB SHOPPING CART</h2>
+            <h2 class="card-title">Form per inserire tutti i campi del DB DDT</h2>
             {% if success %}
             <div class="alert alert-success" role="alert">
-                RdA inserita con successo!
+                DDT inserito con successo!
             </div>
-            {% endif %}
-            <form action="/insert" method="POST">
+            {% endif %}  
+            <form action="/insert_ddts" method="POST">
                 <div class="form-group">
-                    <label for="rda">RDA (*)</label>
-                    <input type="number" class="form-control" id="rda" name="rda" required>
+                    <label for="costo_unitario">Costo Unitario (*)</label>
+                    <input type="text" class="form-control" id="costo_unitario" name="costo_unitario" required>
                 </div>
                 <div class="form-group">
-                    <label for="basket_name">BASKET NAME (*)</label>
-                    <input type="text" class="form-control" id="basket_name" name="basket_name" required>
+                    <label for="quantita">Quantità (*)</label>
+                    <input type="number" class="form-control" id="quantita" name="quantita" required step="1">
+                    <small class="form-text text-muted">* Inserisci un valore intero</small>
+                </div>
+                <div class="form-group">
+                    <label for="ubicazione">Ubicazione (*)</label>
+                    <select class="form-control" id="ubicazione" name="ubicazione" required>
+                        <option value="opzione1"></option>
+                        <option value="Magazzino">Magazzino</option>
+                        <option value="Laboratorio">Laboratorio</option>
+                        <option value="Cliente">Cliente</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="descrizione">Descrizione (*)</label>
+                    <input type="text" class="form-control" id="descrizione" name="descrizione" required>
+                </div>
+                <div class="form-group">
+                    <label for="ddt">DDT (*)</label>
+                    <input type="text" class="form-control" id="ddt" name="ddt">
+                </div>
+                <div class="form-group">
+                    <label for="data_ordine">Data Ordine (*)</label>
+                    <input type="date" class="form-control" id="data_ordine" name="data_ordine" required>
+                </div>
+                <div class="form-group">
+                    <label for="arrivato">Arrivato (*)</label>
+                    <select class="form-control" id="arrivato" name="arrivato" required>
+                        <option value="opzione1"></option>
+                        <option value="Si">Si</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="data_arrivo_ordine">Data Arrivo Ordine (*)</label>
+                    <input type="date" class="form-control" id="data_arrivo_ordine" name="data_arrivo_ordine" required>
                 </div>
                 <div class="form-group">
                     <label for="fornitore">FORNITORE (*)</label>
@@ -68,61 +102,25 @@
                     <input type="text" class="form-control mt-2" id="new_fornitore" name="new_fornitore" placeholder="Aggiungi nuovo fornitore">
                     <button type="button" class="btn btn-primary mt-2" onclick="addFornitore()">Aggiungi Fornitore</button>
                 </div>
-
-                <div class="form-group">
-                    <label for="importo_sc">IMPORTO (*)</label>
-                    <input type="number" class="form-control" id="importo_sc" name="importo_sc" required>
-                </div>
-                <div class="form-group">
-                    <label for="oda">ODA (*)</label>
-                    <input type="number" class="form-control" id="oda" name="oda" required>
-                </div>
-                <div class="form-group">
-                    <label for="commessa">COMMESSA (*)</label>
-                    <input type="text" class="form-control" id="commessa" name="commessa" required>
-                </div>
-                <div class="form-group">
-                    <label for="element">ELEMENT (*)</label>
-                    <input type="text" class="form-control" id="element" name="element" required>
-                </div>
-                <div class="form-group">
-                    <label for="richiedente">RICHIEDENTE (*)</label>
-                    <input type="text" class="form-control" id="richiedente" name="richiedente" required>
-                </div>
-                <div class="form-group">
-                    <label for="data_creazione">DATA CREAZIONE (*)</label>
-                    <input type="date" class="form-control" id="data_creazione" name="data_creazione" required>
-                </div>
-                <div class="form-group">
-                    <label for="tipologia_acquisto">TIPOLOGIA ACQUISTO (*)</label>
-                    <select class="form-control" id="tipologia_acquisto" name="tipologia_acquisto" required>
-                        <option value="nullo"></option>
-                        <option value="HW">HW</option>
-                        <option value="SRV">SRV</option>
-                        <option value="Formazione">Formazione</option>
-                        <option value="Licenze">Licenze</option>
-                        <option value="BR">BR</option>
-                    </select>
-                </div>
                 <button type="submit" class="btn btn-danger btn-block">Submit</button>
             </form>
-            <hr>
-            <a href="/show_rdas" class="btn btn-primary btn-block">Mostra tutte le RdA</a>
-            <a href="/show_fornitori" class="btn btn-secondary btn-block">Mostra tutti i Fornitori</a>      
+            <a href="/" class="btn btn-primary mt-4">Torna alla Home</a>
+            <a href="/show_ddts" class="btn btn-secondary btn-block">Mostra tutti i DDT</a>
+            <a href="/show_fornitori" class="btn btn-secondary btn-block">Mostra tutti i Fornitori</a>     
         </div>
     </div>
-    
-    <script>
-        // Show RdA on database
-        document.getElementById('showRdas').addEventListener('click', function() {
-            var rdasDiv = document.getElementById('rdas');
-            if (rdasDiv.style.display === 'none') {
-                rdasDiv.style.display = 'block';
-            } else {
-                rdasDiv.style.display = 'none';
-            }
-        }); 
 
+
+    <script>
+        // Show DDT on database
+        document.getElementById('showDdts').addEventListener('click', function() {
+            var ddtsDiv = document.getElementById('ddts');
+            if (ddtsDiv.style.display === 'none') {
+                ddtsDiv.style.display = 'block';
+            } else {
+                ddtsDiv.style.display = 'none';
+            }
+        });
 
         // Aggiungi Fornitore      
         function addFornitore() {

@@ -185,7 +185,7 @@ def index():
 
 
 # Insert RdA
-@app.route('/insert', methods=['GET', 'POST'])
+@app.route('/insert_rdas', methods=['GET', 'POST'])
 def insert():
     success = False
     try:
@@ -215,7 +215,7 @@ def insert():
                     connection.close()
                 else:
                     flash("Database connection error.", 'danger')
-                    return render_template('insert.html', fornitori=[], success=False)
+                    return render_template('insert_rda.html', fornitori=[], success=False)
 
     
             # Inserisci i dati nel database RdA
@@ -248,50 +248,51 @@ def insert():
         flash("A database error occurred. Please try again.", 'danger')
         fornitori = []
 
-    return render_template('insert.html', fornitori=fornitori, success=success)
-
+    return render_template('insert_rda.html', fornitori=fornitori, success=success)
 
 
 # Insert DDT
-@app.route('/insert_ddt', methods=['POST'])
+@app.route('/insert_ddts', methods=['GET', 'POST'])
 def insert_ddt():
     success = False  # Inizializza il flag di successo a False
-    if request.method == 'POST':
-        try:
-            costo_unitario = request.form['costo_unitario']
-            quantita = request.form['quantita']
-            ubicazione = request.form['ubicazione']
-            descrizione = request.form['descrizione']
-            ddt = request.form['ddt']
-            data_ordine = request.form['data_ordine']
-            arrivato = request.form['arrivato']
-            data_arrivo_ordine = request.form['data_arrivo_ordine']
+    existing_ddts = []  # To store existing DDT numbers
+    try:
+        if request.method == 'POST':
+                costo_unitario = request.form['costo_unitario']
+                quantita = request.form['quantita']
+                ubicazione = request.form['ubicazione']
+                descrizione = request.form['descrizione']
+                ddt = request.form['ddt']
+                data_ordine = request.form['data_ordine']
+                arrivato = request.form['arrivato']
+                data_arrivo_ordine = request.form['data_arrivo_ordine']
+    
+                connection = get_ddt_db_connection()
+                if connection:
+                    cursor = connection.cursor()
+                    cursor.execute("""
+                        INSERT INTO ddt (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, arrivato, data_arrivo_ordine)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, arrivato, data_arrivo_ordine))
+                    connection.commit()
+                    existing_ddts = [row['ddt'] for row in cursor.fetchall()]
+                    connection.close()
+                    flash("DDT inserito con successo!", "success")
+                    success = True  # Imposta il flag di successo a True se l'inserimento ha avuto successo
+                else:
+                    flash("Errore di connessione al database DDT.", "danger")
+    
+    except Exception as e:  # Cattura qualsiasi tipo di eccezione
+        if connection:
+            connection.rollback()  # Esegui il rollback in caso di errore
+        print(f"Errore durante l'inserimento del DDT: {e}")
+        flash("Si è verificato un errore durante l'inserimento del DDT. Riprova.", "danger")
 
-            connection = get_ddt_db_connection()
-            if connection:
-                cursor = connection.cursor()
-                cursor.execute("""
-                    INSERT INTO ddt (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, arrivato, data_arrivo_ordine)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """, (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, arrivato, data_arrivo_ordine))
-                connection.commit()
-                connection.close()
-                flash("DDT inserito con successo!", "success")
-                success = True  # Imposta il flag di successo a True se l'inserimento ha avuto successo
-            else:
-                flash("Errore di connessione al database DDT.", "danger")
-
-        except Exception as e:  # Cattura qualsiasi tipo di eccezione
-            if connection:
-                connection.rollback()  # Esegui il rollback in caso di errore
-            print(f"Errore durante l'inserimento del DDT: {e}")
-            flash("Si è verificato un errore durante l'inserimento del DDT. Riprova.", "danger")
-
-    return render_template('logistics.html', success=success)  # Passa il flag di successo al template
+    return render_template('insert_ddt.html', success=success, existing_ddts=existing_ddts)  # Passa il flag di successo al template
 
 
 
-# Show ddt
+# Show ddts
 @app.route('/show_ddts')
 def show_ddts():
     connection = get_ddt_db_connection()
@@ -299,7 +300,7 @@ def show_ddts():
     cursor.execute("SELECT * FROM ddt")
     ddts = cursor.fetchall()
     connection.close()
-    return render_template('ddt.html', ddts=ddts)
+    return render_template('show_ddt.html', ddts=ddts)
 
 
 
@@ -311,7 +312,7 @@ def show_rdas():
     cursor.execute("SELECT * FROM example")
     rdas = cursor.fetchall()
     connection.close()
-    return render_template('rdas.html', rdas=rdas)
+    return render_template('show_rda.html', rdas=rdas)
 
 
 
@@ -374,13 +375,6 @@ def get_fornitori():
     fornitori = [row['fornitore'] for row in cursor.fetchall()]
     connection.close()
     return jsonify({"fornitori": fornitori})
-
-
-
-# Logistics
-@app.route('/logistics')
-def logistics():
-    return render_template('logistics.html')
 
 
 # Modify
