@@ -49,15 +49,15 @@
             {% endif %}
             <form action="/insert" method="POST">
                 <div class="form-group">
-                    <label for="rda">RDA (NN)</label>
+                    <label for="rda">RDA (*)</label>
                     <input type="number" class="form-control" id="rda" name="rda" required>
                 </div>
                 <div class="form-group">
-                    <label for="basket_name">BASKET NAME (NN)</label>
+                    <label for="basket_name">BASKET NAME (*)</label>
                     <input type="text" class="form-control" id="basket_name" name="basket_name" required>
                 </div>
                 <div class="form-group">
-                    <label for="fornitore">FORNITORE (NN)</label>
+                    <label for="fornitore">FORNITORE (*)</label>
                     <select class="form-control" id="fornitore" name="fornitore" required>
                         <option value="" disabled selected>Seleziona un fornitore</option>
                         {% for fornitore in fornitori %}
@@ -70,31 +70,31 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="importo_sc">IMPORTO</label>
+                    <label for="importo_sc">IMPORTO (*)</label>
                     <input type="number" class="form-control" id="importo_sc" name="importo_sc" required>
                 </div>
                 <div class="form-group">
-                    <label for="oda">ODA</label>
+                    <label for="oda">ODA (*)</label>
                     <input type="number" class="form-control" id="oda" name="oda" required>
                 </div>
                 <div class="form-group">
-                    <label for="commessa">COMMESSA (NN)</label>
+                    <label for="commessa">COMMESSA (*)</label>
                     <input type="text" class="form-control" id="commessa" name="commessa" required>
                 </div>
                 <div class="form-group">
-                    <label for="element">ELEMENT (NN)</label>
+                    <label for="element">ELEMENT (*)</label>
                     <input type="text" class="form-control" id="element" name="element" required>
                 </div>
                 <div class="form-group">
-                    <label for="richiedente">RICHIEDENTE (NN)</label>
+                    <label for="richiedente">RICHIEDENTE (*)</label>
                     <input type="text" class="form-control" id="richiedente" name="richiedente" required>
                 </div>
                 <div class="form-group">
-                    <label for="data_creazione">DATA CREAZIONE (NN)</label>
+                    <label for="data_creazione">DATA CREAZIONE (*)</label>
                     <input type="date" class="form-control" id="data_creazione" name="data_creazione" required>
                 </div>
                 <div class="form-group">
-                    <label for="tipologia_acquisto">TIPOLOGIA ACQUISTO (NN)</label>
+                    <label for="tipologia_acquisto">TIPOLOGIA ACQUISTO (*)</label>
                     <select class="form-control" id="tipologia_acquisto" name="tipologia_acquisto" required>
                         <option value="nullo"></option>
                         <option value="HW">HW</option>
@@ -111,10 +111,6 @@
             <a href="/show_fornitori" class="btn btn-secondary btn-block">Mostra tutti i Fornitori</a>      
         </div>
     </div>
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     
     <script>
         // Show RdA on database
@@ -163,5 +159,10 @@
             }
         }
     </script>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

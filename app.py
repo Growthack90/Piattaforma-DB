@@ -146,15 +146,20 @@ def home():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        user = User.get(username)
-        if user and users[username]['password'] == password:
-            login_user(user)
-            flash('Login successful!', 'success')
-            return redirect(url_for('home'))
-        else:
-            flash('Invalid credentials, please try again.', 'danger')
+        try:
+            username = request.form['username']
+            password = request.form['password']
+            user = User.get(username)
+            if user and users[username]['password'] == password:
+                login_user(user)
+                flash('Login successful!', 'success')
+                return redirect(url_for('home'))
+            else:
+                flash('Invalid credentials, please try again.', 'danger')
+        except Exception as e:  # Cattura qualsiasi tipo di eccezione
+            print(f"Errore durante il login: {e}")  # Stampa l'errore nella console per il debugging
+            flash("Si è verificato un errore durante il login. Riprova.", "danger")
+
     return render_template('login.html')
 
 
@@ -179,7 +184,7 @@ def index():
     return render_template('index.html')
 
 
-# Insert
+# Insert RdA
 @app.route('/insert', methods=['GET', 'POST'])
 def insert():
     success = False
@@ -246,33 +251,43 @@ def insert():
     return render_template('insert.html', fornitori=fornitori, success=success)
 
 
+
 # Insert DDT
 @app.route('/insert_ddt', methods=['POST'])
 def insert_ddt():
+    success = False  # Inizializza il flag di successo a False
     if request.method == 'POST':
-        costo_unitario = request.form['costo_unitario']
-        quantita = request.form['quantita']
-        ubicazione = request.form['ubicazione']
-        descrizione = request.form['descrizione']
-        ddt = request.form['ddt']
-        data_ordine = request.form['data_ordine']
-        arrivato = request.form['stato_arrivato']  # Nota: usa 'stato_arrivato' come nel form
-        data_arrivo_ordine = request.form['data_arrivo_ordine']
+        try:
+            costo_unitario = request.form['costo_unitario']
+            quantita = request.form['quantita']
+            ubicazione = request.form['ubicazione']
+            descrizione = request.form['descrizione']
+            ddt = request.form['ddt']
+            data_ordine = request.form['data_ordine']
+            arrivato = request.form['arrivato']
+            data_arrivo_ordine = request.form['data_arrivo_ordine']
 
-        connection = get_ddt_db_connection()
-        if connection:
-            cursor = connection.cursor()
-            cursor.execute("""
-                INSERT INTO ddt (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, arrivato, data_arrivo_ordine)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, arrivato, data_arrivo_ordine))
-            connection.commit()
-            connection.close()
-            flash("DDT inserito con successo!", "success")
-        else:
-            flash("Errore di connessione al database DDT.", "danger")
+            connection = get_ddt_db_connection()
+            if connection:
+                cursor = connection.cursor()
+                cursor.execute("""
+                    INSERT INTO ddt (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, arrivato, data_arrivo_ordine)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """, (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, arrivato, data_arrivo_ordine))
+                connection.commit()
+                connection.close()
+                flash("DDT inserito con successo!", "success")
+                success = True  # Imposta il flag di successo a True se l'inserimento ha avuto successo
+            else:
+                flash("Errore di connessione al database DDT.", "danger")
 
-    return redirect(url_for('logistics'))  # Reindirizza alla pagina 'logistics' o dove preferisci
+        except Exception as e:  # Cattura qualsiasi tipo di eccezione
+            if connection:
+                connection.rollback()  # Esegui il rollback in caso di errore
+            print(f"Errore durante l'inserimento del DDT: {e}")
+            flash("Si è verificato un errore durante l'inserimento del DDT. Riprova.", "danger")
+
+    return render_template('logistics.html', success=success)  # Passa il flag di successo al template
 
 
 
@@ -297,6 +312,20 @@ def show_rdas():
     rdas = cursor.fetchall()
     connection.close()
     return render_template('rdas.html', rdas=rdas)
+
+
+
+
+# Show fornitori
+@app.route('/show_fornitori')
+def show_fornitori():
+    connection = get_fornitori_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM fornitori")
+    fornitori = cursor.fetchall()
+    connection.close()
+    return render_template('fornitori.html', fornitori=fornitori)
+
 
 
 
@@ -335,15 +364,17 @@ def add_fornitore():
     return {"success": False}, 400
 
 
-# Show fornitori
-@app.route('/show_fornitori')
-def show_fornitori():
+
+# Restituire elenco fornitori
+@app.route('/get_fornitori', methods=['GET'])
+def get_fornitori():
     connection = get_fornitori_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM fornitori")
-    fornitori = cursor.fetchall()
+    cursor.execute("SELECT fornitore FROM fornitori")
+    fornitori = [row['fornitore'] for row in cursor.fetchall()]
     connection.close()
-    return render_template('fornitori.html', fornitori=fornitori)
+    return jsonify({"fornitori": fornitori})
+
 
 
 # Logistics
@@ -356,6 +387,7 @@ def logistics():
 @app.route('/modify')
 def modify():
     return render_template('modify.html')
+
 
 
 # Cerca un documento per ID
@@ -459,17 +491,6 @@ def delete_document():
 
     return jsonify({"success": True}), 200
 
-
-
-# Restituire elenco fornitori
-@app.route('/get_fornitori', methods=['GET'])
-def get_fornitori():
-    connection = get_fornitori_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT fornitore FROM fornitori")
-    fornitori = [row['fornitore'] for row in cursor.fetchall()]
-    connection.close()
-    return jsonify({"fornitori": fornitori})
 
 
 

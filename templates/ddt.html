@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizza DDT</title>
+    <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -21,6 +22,7 @@
 </head>
 <body>
 
+    <!-- Navbar with dropdown hamburger menu -->
     <nav class="navbar navbar-dark">
         <div class="dropdown">
             <button class="navbar-toggler" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -44,21 +46,20 @@
                 {% for ddt in ddts %}
                 <div class="list-group-item rda-item">
                     <div class="row">
-                        <div class="col-md-4"><span class="rda-label">RDA:</span><span class="rda-value">{{ ddt['ddt'] }}</span></div>
-                        <div class="col-md-4"><span class="rda-label">Basket Name:</span><span class="rda-value">{{ ddt['costo_unitario'] }}</span></div>
+                        <div class="col-md-4"><span class="rda-label">Costo Unitario:</span><span class="rda-value">{{ ddt['costo_unitario'] }}</span></div>
                         <div class="col-md-4"><span class="ddt-label">Fornitore:</span><span class="ddt-value">{{ ddt['quantita'] }}</span></div>
                     </div>
                     <div class="row mt-2">
-                        <div class="col-md-4"><span class="ddt-label">ODA:</span><span class="ddt-value">{{ ddt['ubicazione'] }}</span></div>
-                        <div class="col-md-4"><span class="ddt-label">Commessa:</span><span class="ddt-value">{{ ddt['descrizione'] }}</span></div>
-                        <div class="col-md-4"><span class="ddt-label">Element:</span><span class="ddt-value">{{ ddt['ddt'] }}</span></div>
+                        <div class="col-md-4"><span class="ddt-label">Ubicazione:</span><span class="ddt-value">{{ ddt['ubicazione'] }}</span></div>
+                        <div class="col-md-4"><span class="ddt-label">Descrizione:</span><span class="ddt-value">{{ ddt['descrizione'] }}</span></div>
+                        <div class="col-md-4"><span class="ddt-label">DDT:</span><span class="ddt-value">{{ ddt['ddt'] }}</span></div>
                     </div>
                     <div class="row mt-2">
-                        <div class="col-md-4"><span class="ddt-label">Richiedente:</span><span class="ddt-value">{{ ddt['data_ordine'] }}</span></div>
-                        <div class="col-md-4"><span class="ddt-label">Data Creazione:</span><span class="ddt-value">{{ ddt['arrivato'] }}</span></div>
+                        <div class="col-md-4"><span class="ddt-label">Data Ordine:</span><span class="ddt-value">{{ ddt['data_ordine'] }}</span></div>
+                        <div class="col-md-4"><span class="ddt-label">Arrivato:</span><span class="ddt-value">{{ ddt['arrivato'] }}</span></div>
                     </div>
                     <div class="row mt-2">
-                        <div class="col-md-4"><span class="ddt-label">Tipologia Acquisto:</span><span class="ddt-value">{{ ddt['data_arrivo_ordine'] }}</span></div>
+                        <div class="col-md-4"><span class="ddt-label">Data Arrivo Ordine:</span><span class="ddt-value">{{ ddt['data_arrivo_ordine'] }}</span></div>
                     </div>
                 </div>
                 {% endfor %}
