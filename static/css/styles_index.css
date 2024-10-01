@@ -2,6 +2,8 @@ body {
     background-color: grey;
     font-family: sans-serif;
 }
+
+/* NAVBAR */
 .navbar {
   background-color: #343a40; /* Dark background for the navbar */
   padding-left: 80px; /* Aggiungi padding a sinistra per fare spazio al bottone */
@@ -20,6 +22,7 @@ body {
   background-color: #0056b3; /* Darker blue on hover */
 }
 
+/* BOTTONI */
 .btn-back-home {
   position: fixed; 
   top: 70px;
@@ -63,14 +66,10 @@ body {
   padding-bottom: 10px;
 }
 
-.dashboard {
-  background-color: #28a745; /* Green dashboard */
-  color: white;
-  padding: 30px;
-  margin-top: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-  width: 90%; /* Imposta la larghezza del dashboard */
-  height: 500px; /* Imposta l'altezza del dashboard */
-  margin-left: -150px;
+
+/* DASHBOARD */
+.container {
+  background-color: #45d379; /* Sfondo chiaro per il container */
+  border-radius: 10px; /* Angoli arrotondati */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombra leggera */
 }
