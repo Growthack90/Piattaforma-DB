@@ -186,7 +186,7 @@ def index():
 
 # Insert RdA
 @app.route('/insert_rdas', methods=['GET', 'POST'])
-def insert():
+def insert_rda():
     success = False
     try:
         if request.method == 'POST':

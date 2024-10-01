@@ -48,38 +48,30 @@
         </div>
     </nav>
 
+    <!-- Back To Home-->
+        <button class="btn-back-home btn-back-home" onclick="navigateToHome()"><i class="fas fa-arrow-left"> <-- </i></button>
+
+
     <!-- Operations RdA-->
-    <div class="container text-center my-5">
-        <div class="mb-3">
-            <button class="btn btn-primary btn-lg btn-block" onclick="navigateToHome()">Back Home</button>
-        </div>
-        <div class="mb-3">
-            <button class="btn btn-danger btn-lg btn-block" onclick="navigateToModify()">MODIFICA/ELIMINA RDA/DDT</button>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-6 mb-2">
-                <button class="btn btn-danger btn-block" onclick="navigateToInsert()">Inserisci nuova RdA</button>
+        <div class="row">
+          <div class="col-12 col-md-4">
+            <div class="list-group">
+              <button class="btn btn-danger btn-sm btn-block list-group-item list-group-item-action" onclick="navigateToModify()">Modifica/Elimina<br>RdA/DDT</button>
+              <button class="btn btn-danger btn-sm btn-block list-group-item list-group-item-action" onclick="navigateToInsert()">Inserisci nuova RdA</button>
+              <button class="btn btn-danger btn-sm btn-block list-group-item list-group-item-action" onclick="navigateToLogistics()">Inserimento DDT</button>
+              <button class="btn btn-danger btn-sm btn-block btn-lg list-group-item list-group-item-action">Cerca rapido RdA/Trasporti</button>
+              <button class="btn btn-danger btn-sm btn-block list-group-item list-group-item-action" onclick="navigateToSearch()">Cerca rapido</button>
             </div>
-            <div class="col-12 col-md-6 mb-2">
-                <button class="btn btn-danger btn-block" onclick="navigateToLogistics()">Inserimento DDT</button>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-4 mb-2">
-                <button class="btn btn-danger btn-block btn-lg">Cerca rapido RdA/Trasporti</button>
-            </div>
-            <div class="col-6 col-md-2 mb-2">
-                <button class="btn btn-danger btn-block" onclick="navigateToSearch()">Cerca rapido</button>
-            </div>
-            <div class="col-12 col-md-6 mb-2">
-                <button class="btn btn-danger btn-block" style="width: 100%;">Cerca</button>
+          </div>
+          <!-- Dashboard -->
+            <div class="container my-5">
+                <div class="dashboard">
+                    Dashboard
+                    <p>(Mostrare ultime RdA inserite)</p>
+                </div>
             </div>
         </div>
-        <div class="dashboard">
-            Dashboard
-            <p>(Mostrare ultime RdA inserite)</p>
-        </div>
-    </div>
+
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
