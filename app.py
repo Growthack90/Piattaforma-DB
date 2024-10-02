@@ -109,6 +109,7 @@ def init_ddt_db():
         descrizione TEXT NOT NULL,
         ddt TEXT NOT NULL,
         data_ordine TEXT NOT NULL,
+        fornitore TEXT NOT NULL,
         arrivato TEXT NOT NULL,
         data_arrivo_ordine TEXT NOT NULL
     )
@@ -203,7 +204,8 @@ def insert_rda():
             tipologia_acquisto = request.form['tipologia_acquisto']
 
             connection = None
-    
+
+            # Aggiungi nuovo fornitore   
             if new_fornitore:
                 fornitore = new_fornitore
                 # Inserisci il nuovo fornitore nel database fornitori
@@ -255,40 +257,62 @@ def insert_rda():
 @app.route('/insert_ddts', methods=['GET', 'POST'])
 def insert_ddt():
     success = False  # Inizializza il flag di successo a False
-    existing_ddts = []  # To store existing DDT numbers
+    fornitori = []  # Initialize fornitori here
     try:
         if request.method == 'POST':
-                costo_unitario = request.form['costo_unitario']
-                quantita = request.form['quantita']
-                ubicazione = request.form['ubicazione']
-                descrizione = request.form['descrizione']
-                ddt = request.form['ddt']
-                data_ordine = request.form['data_ordine']
-                arrivato = request.form['arrivato']
-                data_arrivo_ordine = request.form['data_arrivo_ordine']
-    
-                connection = get_ddt_db_connection()
+            costo_unitario = request.form['costo_unitario']
+            quantita = request.form['quantita']
+            ubicazione = request.form['ubicazione']
+            descrizione = request.form['descrizione']
+            ddt = request.form['ddt']
+            data_ordine = request.form['data_ordine']
+            fornitore = request.form['fornitore']
+            new_fornitore = request.form['new_fornitore']
+            arrivato = request.form['arrivato']
+            data_arrivo_ordine = request.form['data_arrivo_ordine']
+            connection = None
+            # Aggiungi nuovo fornitore   
+            if new_fornitore:
+                fornitore = new_fornitore
+                # Inserisci il nuovo fornitore nel database fornitori
+                connection = get_fornitori_db_connection()
                 if connection:
                     cursor = connection.cursor()
-                    cursor.execute("""
-                        INSERT INTO ddt (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, arrivato, data_arrivo_ordine)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                    """, (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, arrivato, data_arrivo_ordine))
+                    cursor.execute("INSERT OR IGNORE INTO fornitori (fornitore) VALUES (?)", (new_fornitore,))
                     connection.commit()
-                    existing_ddts = [row['ddt'] for row in cursor.fetchall()]
                     connection.close()
-                    flash("DDT inserito con successo!", "success")
-                    success = True  # Imposta il flag di successo a True se l'inserimento ha avuto successo
                 else:
-                    flash("Errore di connessione al database DDT.", "danger")
-    
-    except Exception as e:  # Cattura qualsiasi tipo di eccezione
-        if connection:
-            connection.rollback()  # Esegui il rollback in caso di errore
-        print(f"Errore durante l'inserimento del DDT: {e}")
-        flash("Si è verificato un errore durante l'inserimento del DDT. Riprova.", "danger")
+                    flash("Database connection error.", 'danger')
+                    return render_template('insert_ddt.html', fornitori=[], success=False)
+            # Inserisci i dati nel database DDT
+            connection = get_ddt_db_connection()
+            if connection:
+                cursor = connection.cursor()
+                cursor.execute("""
+                    INSERT INTO ddt (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, fornitore, arrivato, data_arrivo_ordine) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, fornitore, arrivato, data_arrivo_ordine))
+                connection.commit()
+                success = True  # Imposta il flag di successo a True se l'inserimento ha avuto successo
 
-    return render_template('insert_ddt.html', success=success, existing_ddts=existing_ddts)  # Passa il flag di successo al template
+                # Recupera l'elenco dei fornitori dal database fornitori.db
+                connection = get_fornitori_db_connection()
+                if connection:
+                    cursor = connection.cursor()
+                    cursor.execute("SELECT fornitore FROM fornitori")
+                    fornitori = [row['fornitore'] for row in cursor.fetchall()]
+                    connection.close()
+                else:
+                    flash("Error retrieving suppliers.", 'danger')
+                    # fornitori is already initialized to an empty list                    
+    except sqlite3.Error as e:
+        if connection:
+            connection.rollback()
+        print(f"Database error: {e}")
+        flash("A database error occurred. Please try again.", 'danger')
+        # fornitori is already initialized to an empty list 
+
+    return render_template('insert_ddt.html', fornitori=fornitori, success=success)
 
 
 

@@ -1,4 +1,4 @@
-# DB SAL
+# PIATTAFORMA DB
 
 ## Requirement:
 - Install Python3
