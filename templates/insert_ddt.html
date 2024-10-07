@@ -80,18 +80,6 @@
                     <input type="date" class="form-control" id="data_ordine" name="data_ordine" required>
                 </div>
                 <div class="form-group">
-                    <label for="arrivato">Arrivato (*)</label>
-                    <select class="form-control" id="arrivato" name="arrivato" required>
-                        <option value="opzione1"></option>
-                        <option value="Si">Si</option>
-                        <option value="No">No</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="data_arrivo_ordine">Data Arrivo Ordine (*)</label>
-                    <input type="date" class="form-control" id="data_arrivo_ordine" name="data_arrivo_ordine" required>
-                </div>
-                <div class="form-group">
                     <label for="fornitore">FORNITORE (*)</label>
                     <select class="form-control" id="fornitore" name="fornitore" required>
                         <option value="" disabled selected>Seleziona un fornitore</option>
@@ -102,6 +90,18 @@
                     <small id="addFornitoreHelp" class="form-text text-muted">Se il fornitore non è presente, aggiungilo</small>
                     <input type="text" class="form-control mt-2" id="new_fornitore" name="new_fornitore" placeholder="Aggiungi nuovo fornitore">
                     <button type="button" class="btn btn-primary mt-2" onclick="addFornitore()">Aggiungi Fornitore</button>
+                </div>
+                <div class="form-group">
+                    <label for="arrivato">Arrivato (*)</label>
+                    <select class="form-control" id="arrivato" name="arrivato" required>
+                        <option value="opzione1"></option>
+                        <option value="Si">Si</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="data_arrivo_ordine">Data Arrivo Ordine (*)</label>
+                    <input type="date" class="form-control" id="data_arrivo_ordine" name="data_arrivo_ordine" required>
                 </div>
                 <button type="submit" class="btn btn-danger btn-block">Submit</button>
             </form>

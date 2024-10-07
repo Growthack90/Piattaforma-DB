@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from userModel import User, users
 
@@ -138,7 +138,7 @@ init_ddt_db()
 
 # Home
 @app.route('/')
-@login_required
+@login_required # verifica se l'utente è loggato. Se non lo è, reindirizza l'utente alla pagina di login
 def home():
     return render_template('home.html', username=current_user.id)
 
@@ -187,8 +187,10 @@ def index():
 
 # Insert RdA
 @app.route('/insert_rdas', methods=['GET', 'POST'])
+@login_required
 def insert_rda():
     success = False
+    fornitori = []  # Inizializza la lista dei fornitori
     try:
         if request.method == 'POST':
             rda = request.form['rda']
@@ -255,9 +257,10 @@ def insert_rda():
 
 # Insert DDT
 @app.route('/insert_ddts', methods=['GET', 'POST'])
+@login_required
 def insert_ddt():
     success = False  # Inizializza il flag di successo a False
-    fornitori = []  # Initialize fornitori here
+    fornitori = []  # Inizializza la lista dei fornitori
     try:
         if request.method == 'POST':
             costo_unitario = request.form['costo_unitario']
@@ -301,7 +304,7 @@ def insert_ddt():
                     cursor = connection.cursor()
                     cursor.execute("SELECT fornitore FROM fornitori")
                     fornitori = [row['fornitore'] for row in cursor.fetchall()]
-                    connection.close()
+                    connection.close()  # Chiudi la connessione DOPO aver recuperato i fornitori
                 else:
                     flash("Error retrieving suppliers.", 'danger')
                     # fornitori is already initialized to an empty list                    
@@ -318,11 +321,34 @@ def insert_ddt():
 
 # Show ddts
 @app.route('/show_ddts')
+@login_required
 def show_ddts():
     connection = get_ddt_db_connection()
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM ddt")
     ddts = cursor.fetchall()
+
+    # debug --> stampa il valore di ddts e verificare che contenga i dati recuperati dal database
+    print(ddts)  # Stampa la lista di tuple recuperata dal database. Ogni tupla rappresenta una riga della tabella ddt.
+    print(type(ddts))  # Stampa il tipo di dato di ddts (dovrebbe essere <class 'list'>)
+
+    # Il ciclo for itera sulla lista ddts e stampa ogni singola tupla, rendendo l'output più leggibile.
+    for ddt in ddts:
+        print(ddt)  # Stampa ogni tupla nella lista
+        print(ddt['id'])           # Stampa il valore della colonna 'id'
+        print(ddt['costo_unitario']) # Stampa il valore della colonna 'costo_unitario'
+        print(ddt['quantita'])     # Stampa il valore della colonna 'quantita'
+        print(ddt['ubicazione']) 
+        print(ddt['descrizione']) 
+        print(ddt['ddt']) 
+        print(ddt['data_ordine']) 
+        print(ddt['fornitore'])
+        print(ddt['arrivato'])
+        print(ddt['data_arrivo_ordine'])
+
+    # Dove vedere l'output?
+    # L'output di print() verrà visualizzato nel terminale in cui esegui l'applicazione Flask. Se usi un ambiente di sviluppo come Visual Studio Code, l'output potrebbe essere visualizzato nel pannello "Debug Console" o "Terminal".
+
     connection.close()
     return render_template('show_ddt.html', ddts=ddts)
 
@@ -330,6 +356,7 @@ def show_ddts():
 
 # Show rdas
 @app.route('/show_rdas')
+@login_required
 def show_rdas():
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -343,6 +370,7 @@ def show_rdas():
 
 # Show fornitori
 @app.route('/show_fornitori')
+@login_required
 def show_fornitori():
     connection = get_fornitori_db_connection()
     cursor = connection.cursor()
@@ -514,6 +542,7 @@ def delete_document():
 
 # Search
 @app.route('/search', methods=['GET', 'POST'])
+@login_required
 def search():
     if request.method == 'POST':
         search_field = request.form['search_field']

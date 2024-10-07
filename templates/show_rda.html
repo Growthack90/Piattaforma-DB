@@ -58,13 +58,16 @@
         <ul class="list-group">
             {% for rda in rdas %}
             <div class="list-group-item rda-item">
-                <div class="row">
+                <div class="row mt-2">
                     <div class="col-md-4"><span class="rda-label">RDA:</span><span class="rda-value">{{ rda['rda'] }}</span></div>
                     <div class="col-md-4"><span class="rda-label">Basket Name:</span><span class="rda-value">{{ rda['basket_name'] }}</span></div>
                     <div class="col-md-4"><span class="rda-label">Fornitore:</span><span class="rda-value">{{ rda['fornitore'] }}</span></div>
                 </div>
-                <div class="row mt-2">
+                <div class="row mt-2">                  
+                    <div class="col-md-4"><span class="rda-label">Importo:</span><span class="rda-value">{{ rda['importo_sc'] }}</span></div>
                     <div class="col-md-4"><span class="rda-label">ODA:</span><span class="rda-value">{{ rda['oda'] }}</span></div>
+                </div>
+                <div class="row mt-2">                  
                     <div class="col-md-4"><span class="rda-label">Commessa:</span><span class="rda-value">{{ rda['commessa'] }}</span></div>
                     <div class="col-md-4"><span class="rda-label">Element:</span><span class="rda-value">{{ rda['element'] }}</span></div>
                 </div>
