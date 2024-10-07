@@ -173,9 +173,19 @@ def logout():
 
 
 # Register
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    return render_template('home.html', username=current_user.id)
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        if User.create(username, password):
+            flash('Registration successful! You can now log in.', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('Username already exists. Please choose a different one.', 'danger')
+
+    return render_template('register.html') 
 
 
 # Index
