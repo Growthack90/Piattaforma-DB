@@ -141,7 +141,7 @@ init_ddt_db()
 @login_required # verifica se l'utente è loggato. Se non lo è, reindirizza l'utente alla pagina di login
 def home():
     return render_template('home.html', username=current_user.id)
-
+##########################################################
 
 # Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -162,7 +162,7 @@ def login():
             flash("Si è verificato un errore durante il login. Riprova.", "danger")
 
     return render_template('login.html')
-
+##########################################################
 
 # Logout
 @app.route('/logout')
@@ -170,7 +170,7 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
-
+##########################################################
 
 # Register
 @app.route('/register', methods=['GET', 'POST'])
@@ -186,14 +186,14 @@ def register():
             flash('Username already exists. Please choose a different one.', 'danger')
 
     return render_template('register.html') 
-
+##########################################################
 
 # Index
 @app.route('/index')
 @login_required
 def index():
     return render_template('index.html')
-
+##########################################################
 
 # Insert RdA
 @app.route('/insert_rdas', methods=['GET', 'POST'])
@@ -263,6 +263,7 @@ def insert_rda():
         fornitori = []
 
     return render_template('insert_rda.html', fornitori=fornitori, success=success)
+##########################################################
 
 
 # Insert DDT
@@ -326,7 +327,7 @@ def insert_ddt():
         # fornitori is already initialized to an empty list 
 
     return render_template('insert_ddt.html', fornitori=fornitori, success=success)
-
+##########################################################
 
 
 # Show ddts
@@ -346,8 +347,8 @@ def show_ddts():
     for ddt in ddts:
         print(ddt)  # Stampa ogni tupla nella lista
         print(ddt['id'])           # Stampa il valore della colonna 'id'
-        print(ddt['costo_unitario']) # Stampa il valore della colonna 'costo_unitario'
-        print(ddt['quantita'])     # Stampa il valore della colonna 'quantita'
+        print(ddt['costo_unitario'])
+        print(ddt['quantita'])
         print(ddt['ubicazione']) 
         print(ddt['descrizione']) 
         print(ddt['ddt']) 
@@ -357,11 +358,11 @@ def show_ddts():
         print(ddt['data_arrivo_ordine'])
 
     # Dove vedere l'output?
-    # L'output di print() verrà visualizzato nel terminale in cui esegui l'applicazione Flask. Se usi un ambiente di sviluppo come Visual Studio Code, l'output potrebbe essere visualizzato nel pannello "Debug Console" o "Terminal".
+    # L'output di "print()" verrà visualizzato nel terminale in cui esegui l'applicazione Flask. Se usi un ambiente di sviluppo come Visual Studio Code, l'output potrebbe essere visualizzato nel pannello "Debug Console" o "Terminal".
 
     connection.close()
     return render_template('show_ddt.html', ddts=ddts)
-
+##########################################################
 
 
 # Show rdas
@@ -372,10 +373,28 @@ def show_rdas():
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM example")
     rdas = cursor.fetchall()
+
+    # debug
+    print(rdas)
+    print(type(rdas))
+
+    for rda in rdas:
+        print(rda)
+        print(rda['id'])
+        print(rda['rda'])
+        print(rda['basket_name'])
+        print(rda['fornitore'])
+        print(rda['importo_sc'])
+        print(rda['oda'])
+        print(rda['commessa'])
+        print(rda['element'])
+        print(rda['richiedente'])
+        print(rda['data_creazione'])
+        print(rda['tipologia_acquisto'])
+
     connection.close()
     return render_template('show_rda.html', rdas=rdas)
-
-
+##########################################################
 
 
 # Show fornitori
@@ -386,9 +405,18 @@ def show_fornitori():
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM fornitori")
     fornitori = cursor.fetchall()
+
+    # debug
+    print(fornitori)
+    print(type(fornitori))
+
+    for fornitore in fornitori:
+        print(fornitore)
+        print(fornitore['id'])
+
     connection.close()
     return render_template('fornitori.html', fornitori=fornitori)
-
+##########################################################
 
 
 
@@ -407,7 +435,7 @@ def add_ddt():
 
         return {"success": True}
     return {"success": False}, 400
-
+##########################################################
 
 
 # Add fornitori
@@ -425,7 +453,7 @@ def add_fornitore():
 
         return {"success": True}
     return {"success": False}, 400
-
+##########################################################
 
 
 # Restituire elenco fornitori
@@ -437,13 +465,13 @@ def get_fornitori():
     fornitori = [row['fornitore'] for row in cursor.fetchall()]
     connection.close()
     return jsonify({"fornitori": fornitori})
-
+##########################################################
 
 # Modify
 @app.route('/modify')
 def modify():
     return render_template('modify.html')
-
+##########################################################
 
 
 # Cerca un documento per ID
@@ -479,7 +507,7 @@ def search_document():
             return jsonify(dict(document)), 200
         else:
             return jsonify({"error": "Document not found"}), 404
-
+##########################################################
 
 
 # Modifica un documento
@@ -512,7 +540,7 @@ def modify_document():
         connection.close()
 
     return jsonify({"success": True}), 200
-
+##########################################################
 
 
 # Assicurati che la tabella example nel tuo database SQLite abbia effettivamente le colonne che stai cercando di aggiornare. Puoi farlo eseguendo una query per visualizzare la struttura della tabella
@@ -524,6 +552,7 @@ def check_table_structure():
     columns = cursor.fetchall()
     connection.close()
     return jsonify([dict(column) for column in columns]), 200
+##########################################################
 
 
 # Elimina un documento
@@ -546,8 +575,7 @@ def delete_document():
         connection.close()
 
     return jsonify({"success": True}), 200
-
-
+##########################################################
 
 
 # Search
@@ -571,7 +599,7 @@ def search():
             return render_template('search.html', results=results)
 
     return render_template('search.html')
-
+##########################################################
 
 
 # Search Results
@@ -599,7 +627,7 @@ def search_results():
         return jsonify({"error": "An error occurred during the search. Please try again."}), 500
     finally:
         connection.close()
-
+##########################################################
 
 
 # non dimenticare di cambiarlo in False prima di caricarlo sull'host per evitare qualsiasi attacco da parte di hacker
