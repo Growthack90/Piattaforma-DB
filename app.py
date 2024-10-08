@@ -3,12 +3,14 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from userModel import User, users
 
 import sqlite3
+# import os
 
 app = Flask(__name__)
 
 
 # Set Login
 app.secret_key = 'your_secret_key'  # Sostituisci con una chiave segreta più sicura
+# app.secret_key = os.urandom(24)
 
 # Configura Flask-Login
 login_manager = LoginManager()
@@ -601,6 +603,29 @@ def search():
     return render_template('search.html')
 ##########################################################
 
+# Search DDT
+@app.route('/search_ddt', methods=['GET', 'POST'])
+@login_required
+def search_ddt():
+    if request.method == 'POST':
+        search_field = request.form['search_field']
+        search_value = request.form['search_value']
+
+        if search_field and search_value:
+            connection = get_ddt_db_connection()
+            cursor = connection.cursor()
+
+            # Dynamically construct the SQL query
+            query = f"SELECT * FROM example WHERE {search_field} = ?"
+            cursor.execute(query, (search_value,))
+            results = cursor.fetchall()
+            connection.close()
+
+            return render_template('search_ddt.html', results=results)
+
+    return render_template('search_ddt.html')
+##########################################################
+
 
 # Search Results
 @app.route('/search_results', methods=['GET'])
@@ -628,6 +653,32 @@ def search_results():
     finally:
         connection.close()
 ##########################################################
+
+# Search Results DDT
+@app.route('/search_results_ddt', methods=['GET'])
+def search_results_ddt():
+    search_field = request.args.get('search_field')
+    search_value = request.args.get('search_value')
+
+    if not search_field or not search_value:
+        return jsonify({"error": "Please select a search field and enter a value."}), 400
+
+    connection = get_ddt_db_connection()
+    if connection is None:
+        return jsonify({"error": "Database connection error"}), 500
+
+    try:
+        cursor = connection.cursor()
+         # Query per cercare nella tabella ddt
+        query = f"SELECT * FROM ddt WHERE {search_field} = ?"  
+        cursor.execute(query, (search_value,))
+        results = cursor.fetchall()
+        return jsonify([dict(row) for row in results]), 200  # Return results as JSON
+    except sqlite3.Error as e:
+        print(f"Database error during search: {e}")
+        return jsonify({"error": "An error occurred during the search. Please try again."}), 500
+    finally:
+            connection.close()
 
 
 # non dimenticare di cambiarlo in False prima di caricarlo sull'host per evitare qualsiasi attacco da parte di hacker

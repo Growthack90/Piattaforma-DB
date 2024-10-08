@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cerca RDA</title>
+    <title>Cerca DDT</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -67,16 +67,16 @@
     
     <div class="container my-5">
         <div class="card p-4">
-            <h2 class="card-title">FORM PER RICERCARE RAPIDAMENTE</h2>
-            <form action="/search_results" method="get">
+            <h2 class="card-title">FORM PER RICERCARE RAPIDAMENTE DDT</h2>
+            <form action="/search_results_ddt" method="get">
                 <div class="form-group">
                     <label for="search_field">Seleziona campo di ricerca:</label>
                     <select class="form-control" id="search_field" name="search_field">
                         <option value="vuoto"></option>
-                        <option value="rda">Numero RDA</option>
-                        <option value="basket_name">Basket Name</option>
+                        <option value="ddt">Numero DDT</option>
+                        <option value="data_ordine">Data Ordine</option>
+                        <option value="arrivato">Arrivato</option>
                         <option value="fornitore">Fornitore</option>
-                        <option value="commessa">Commessa</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -90,10 +90,10 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Numero RDA</th>
-                            <th>Basket Name</th>
+                            <th>DDT</th>
+                            <th>Data Ordine</th>
+                            <th>Arrivato</th>
                             <th>Fornitore</th>
-                            <th>Commessa</th>
                         </tr>
                     </thead>
                     <tbody id="search-results-list">
@@ -115,7 +115,7 @@
             const searchValue = document.getElementById('search_value').value;
     
             // Send AJAX request
-            fetch(`/search_results?search_field=${searchField}&search_value=${searchValue}`)
+            fetch(`/search_results_ddt?search_field=${searchField}&search_value=${searchValue}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -134,10 +134,10 @@
                         data.forEach(row => {
                             const tableRow = document.createElement('tr');
                             tableRow.innerHTML = `
-                                <td>${row.rda}</td>
-                                <td>${row.basket_name}</td>
+                                <td>${row.ddt}</td>
+                                <td>${row.data_ordine}</td>
+                                <td>${row.arrivato}</td>
                                 <td>${row.fornitore}</td>
-                                <td>${row.commessa}</td>
                             `;
                             resultsList.appendChild(tableRow);
                         });
