@@ -1,16 +1,12 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from userModel import User, users
-
 import sqlite3
 # import os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../frontend/templates') # Flask, per impostazione predefinita, cerca i template nella cartella templates situata nella stessa directory del file app.py.  Per indicare a Flask dove trovare i template in una struttura di directory personalizzata, devi configurare la variabile template_folder durante l'inizializzazione dell'app
 
-
-# Set Login
-app.secret_key = 'your_secret_key'  # Sostituisci con una chiave segreta più sicura
-# app.secret_key = os.urandom(24)
+app.config.from_object('config')
 
 # Configura Flask-Login
 login_manager = LoginManager()

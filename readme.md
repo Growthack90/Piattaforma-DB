@@ -15,7 +15,7 @@
     On Windows:
 
     $ python -m venv venv
-    $ venv\Scripts\activate
+    $ .venv\Scripts\activate
     (venv) $ _
 
     $ deactivate    # to deactivate develop environment
