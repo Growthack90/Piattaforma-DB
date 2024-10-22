@@ -3,9 +3,23 @@
 ## Requirement:
 - Install Python3
 - Install Virtual Environment (VENV)
-    * py -3 -m venv .venv
-    * .venv\Scripts\activate
-    * deactivate    # to deactivate develop environment
+    ```
+    On Linux/MacOS:
+
+    $ python3 -m venv venv
+    $ source venv/bin/activate
+    (venv) $ _
+
+    $ deactivate    # to deactivate develop environment
+
+    On Windows:
+
+    $ python -m venv venv
+    $ venv\Scripts\activate
+    (venv) $ _
+
+    $ deactivate    # to deactivate develop environment
+    ```
 - Install PIP
 - Install dependencies:
     * pip install setuptools
@@ -13,6 +27,7 @@
     * $ pip install pandas
     * $ pip install numpy
     * $ pip install seaborn
+    * $ pip install Flask-SQLAlchemy
     * pip install flask-login
     * pip install jupyter
 
@@ -20,5 +35,5 @@
     * $ pip list
 
 - Run App
-    * flask --app app run
+    * flask --app appEntry run
 

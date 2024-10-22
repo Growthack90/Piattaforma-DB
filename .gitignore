@@ -4,11 +4,10 @@ __pycache__/
 
 .vscode/
 
+JupyterNotebook_example/
+
 *.db
 
 init_script.py
 
-populate_fornitori.py
-
-JupyterNotebook_example/
-
+fornitori.py
