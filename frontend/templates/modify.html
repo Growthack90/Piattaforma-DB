@@ -9,11 +9,77 @@
       rel="stylesheet"
     />
 
-    <!-- Style CSS -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/styles_modify.css') }}"
-    />
+    <style>
+      body {
+        background-color: #2A3971;
+        font-family: sans-serif;
+      }
+
+    /* NAVBAR */
+      .navbar {
+        background-color: #1B264C;
+        /* Black navbar */
+        color: #fff;
+        /* White text */
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        /* Align items to both ends */
+        align-items: center;
+        /* Vertically center content */
+      }
+
+      .dropdown:hover .dropdown-menu {
+        display: block;
+      }
+
+      .dropdown-button {
+        background-color: #fff; /* White background for the button */
+        color: #000; /* Black text color */
+        border: none;
+        font-size: 1.2em;
+        cursor: pointer;
+        padding: 8px; /* Adjust padding for square shape */
+        width: 50px; /* Adjust width for square shape */
+        height: 50px; /* Adjust height for square shape */
+      }
+
+      .dropdown-menu {
+        display: none;
+        position: absolute;
+        background-color: #000;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+      }
+
+      .dropdown-menu a {
+        color: #fff;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+
+     /* Center the "Home" text */
+      .navbar h1 {
+        flex-grow: 1; /* Allow h1 to take up available space */
+        text-align: center; /* Center the text within h1 */
+        margin: 0; /* Remove default h1 margins */
+        font-size: 60px;
+      }
+    /* ************** */
+
+      .info-box {
+        background-color: lightgreen;
+        color: black;
+        padding: 20px;
+        margin-top: 20px;
+      }
+      #update-fields {
+        display: none;
+        margin-top: 20px;
+      }
+    </style>
 
     <script>
       function navigateToHome() {
@@ -26,19 +92,11 @@
   </head>
   <body>
     <!-- Navbar with dropdown hamburger menu -->
-    <nav class="navbar navbar-dark">
+    <nav class="navbar">
+      <!-- Buttons for Menù hamburger -->
       <div class="dropdown">
-        <button
-          class="navbar-toggler"
-          type="button"
-          id="dropdownMenuButton"
-          data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <button class="dropdown-button">M</button>
+        <div class="dropdown-menu">
           <a class="dropdown-item" onclick="navigateToHome()">Home</a>
           <a class="dropdown-item" onclick="navigateToIndex()">Operazioni RdA</a>
           <a class="dropdown-item" href="/show_fornitori">DB Fornitori</a>
@@ -48,6 +106,8 @@
           <a class="dropdown-item" href="#">Contact</a>
         </div>
       </div>
+      <!-- Page Operations -->      
+      <h1>Modifica/Elimina</h1>
     </nav>
 
     <div class="container my-5">

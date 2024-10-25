@@ -4,10 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Style CSS -->   
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_index.css') }}">
+
+    <style>
+      body {
+        background-color: #2A3971;
+        font-family: sans-serif;
+      }
+
+    /* NAVBAR */
+      .navbar {
+        background-color: #1B264C;
+        /* Black navbar */
+        color: #fff;
+        /* White text */
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        /* Align items to both ends */
+        align-items: center;
+        /* Vertically center content */
+      }
+
+      .dropdown:hover .dropdown-menu {
+        display: block;
+      }
+
+      .dropdown-button {
+        background-color: #fff; /* White background for the button */
+        color: #000; /* Black text color */
+        border: none;
+        font-size: 1.2em;
+        cursor: pointer;
+        padding: 8px; /* Adjust padding for square shape */
+        width: 50px; /* Adjust width for square shape */
+        height: 50px; /* Adjust height for square shape */
+      }
+
+      .dropdown-menu {
+        display: none;
+        position: absolute;
+        background-color: #000;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+      }
+
+      .dropdown-menu a {
+        color: #fff;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+
+     /* Center the "Home" text */
+      .navbar h1 {
+        flex-grow: 1; /* Allow h1 to take up available space */
+        text-align: center; /* Center the text within h1 */
+        margin: 0; /* Remove default h1 margins */
+        font-size: 60px;
+      }
+    /* ************** */
+    </style>
 
     <script>
         function navigateToHome() {
@@ -32,27 +89,28 @@
 </head>
 
 <body>
-
     <!-- Navbar with dropdown hamburger menu -->
-    <nav class="navbar navbar-dark">
-        <div class="dropdown">
-            <button class="navbar-toggler" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" onclick="navigateToHome()">Home</a>
-                <a class="dropdown-item" href="#">Operazioni RdA</a>
-                <a class="dropdown-item" href="/show_fornitori">DB Fornitori</a>
-                <a class="dropdown-item" href="/show_rdas">DB RdA</a>
-                <a class="dropdown-item" href="/show_ddts">DB DDT</a>
-                <a class="dropdown-item" href="#">Statistiche</a>
-                <a class="dropdown-item" href="#">Contact</a>
-            </div>
+    <nav class="navbar">
+      <!-- Buttons for Menù hamburger -->
+      <div class="dropdown">
+        <button class="dropdown-button">M</button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" onclick="navigateToHome()">Home</a>
+          <a class="dropdown-item" href="#">Operazioni RdA</a>
+          <a class="dropdown-item" href="/show_fornitori">DB Fornitori</a>
+          <a class="dropdown-item" href="/show_rdas">DB RdA</a>
+          <a class="dropdown-item" href="/show_ddts">DB DDT</a>
+          <a class="dropdown-item" href="#">Statistiche</a>
+          <a class="dropdown-item" href="#">Contact</a>
         </div>
+      </div>
+      <!-- Page Operations -->      
+      <h1>Operazioni</h1>
     </nav>
 
+
     <!-- Back To Home-->
-        <button class="btn-back-home btn-back-home" onclick="navigateToHome()"><i class="fas fa-arrow-left"> <-- </i></button>
+        <button class="back-home" onclick="navigateToHome()">Home</button>
 
 
     <!-- Operations RdA-->
@@ -71,7 +129,7 @@
           <div class="container my-5">
               <h2>Dashboard</h2>
             <div class="row">
-                <div class="col-md-6" class="dashboard"> 
+                <div class="col-1" class="dashboard"> 
                     <div>
                         <ul>
                           <li>Rda 1</li>
@@ -80,7 +138,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-6" class="dashboard">
+                <div class="col-2" class="dashboard">
                     <div>
                         <ul>
                            <li>DDT 1</li>
@@ -90,10 +148,5 @@
                 </div>
             </div>
         </div>
-
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

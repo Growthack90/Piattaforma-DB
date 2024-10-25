@@ -5,7 +5,6 @@ import sqlite3
 # import os
 
 app = Flask(__name__, template_folder='../frontend/templates') # Flask, per impostazione predefinita, cerca i template nella cartella templates situata nella stessa directory del file app.py.  Per indicare a Flask dove trovare i template in una struttura di directory personalizzata, devi configurare la variabile template_folder durante l'inizializzazione dell'app
-
 app.config.from_object('config')
 
 # Configura Flask-Login
