@@ -64,6 +64,30 @@
         font-size: 60px;
       }
     /* ************** */
+    /* DASHBOARD  */
+        /* Style the dashboard container */
+        .dashboard-container {
+  width: 80%; /* Larghezza del container - regola in base alle tue esigenze */
+  margin: 0 auto; /* Centra il container orizzontalmente */
+  background-color: white;
+  padding: 20px; /* Aggiungi un po' di padding interno */
+  border-radius: 5px; /* Angoli arrotondati (opzionale) */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Aggiungi un'ombra leggera (opzionale) */
+}
+
+.row {
+  display: flex;
+}
+
+.col-md-6 {
+  width: 50%;
+  padding: 10px; /* Aggiungi spazio tra le colonne */
+}
+
+.dashboard ul {
+  list-style: none; /* Rimuovi i punti elenco */
+  padding: 0;
+}
     </style>
 
     <script>
@@ -124,29 +148,30 @@
               <button class="btn btn-danger btn-sm btn-block list-group-item list-group-item-action" onclick="navigateToSearch()">Cerca rapido RdA</button>
             </div>
           </div>
+        </div>
 
-          <!-- Dashboard -->
-          <div class="container my-5">
-              <h2>Dashboard</h2>
-            <div class="row">
-                <div class="col-1" class="dashboard"> 
-                    <div>
-                        <ul>
-                          <li>Rda 1</li>
-                          <li>Rda 2</li>
-                          <li>Rda 3</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-2" class="dashboard">
-                    <div>
-                        <ul>
-                           <li>DDT 1</li>
-                           <li>DDT 2</li>
-                           <li>DDT 3</li>
-                        </ul>
+      <!-- Dashboard -->
+      <div class="dashboard-container">
+          <h2 style="text-align: center">Dashboard</h2>
+        <div class="row">
+            <div class="col-md-6 dashboard"> 
+                <div>
+                    <ul>
+                      <li>Rda 1</li>
+                      <li>Rda 2</li>
+                      <li>Rda 3</li>
+                    </ul>
                 </div>
             </div>
+            <div class="col-md-6 dashboard">
+                <div>
+                    <ul>
+                       <li>DDT 1</li>
+                       <li>DDT 2</li>
+                       <li>DDT 3</li>
+                    </ul>
+            </div>
         </div>
+      </div>
 </body>
 </html>
