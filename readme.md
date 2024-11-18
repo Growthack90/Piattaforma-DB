@@ -37,3 +37,12 @@
 - Run App
     * flask --app appEntry run
 
+## Test:
+Run to init script:
+- to popular suppliers db
+- start app
+
+```
+    $ python init_script.py
+```
+

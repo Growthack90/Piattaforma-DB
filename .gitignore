@@ -7,7 +7,3 @@ __pycache__/
 JupyterNotebook_example/
 
 *.db
-
-init_script.py
-
-fornitori.py
