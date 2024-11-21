@@ -17,64 +17,29 @@ def load_user(username):
     return User.get(username)
 
 
-# CONNESSIONE DB RDA
-# Creazione e comunicazione con il database RdA (con aggiunta di una corretta gestione degli errori alle query del database per rilevare eccezioni e impedire l'arresto anomalo dell'applicazione)
-def get_db_connection():
+   
+# CREAZIONE E CONNESSIONE DB:(RDA, FORNITORI, DDT)
+# (con aggiunta di una corretta gestione degli errori alle query del database per rilevare eccezioni e impedire l'arresto anomalo dell'applicazione)
+def get_db_connection(db_name):
   try:
-    connection = sqlite3.connect("database-rda.db")
+    connection = sqlite3.connect(db_name)
     connection.row_factory = sqlite3.Row
     return connection
   except sqlite3.Error as e:
-      print(f"Database connection error: {e}")
+      print(f"Database connection error {db_name}:  {e}")
       return None  # Alternatively, raise a custom exception or handle it in the calling function.
 
 
-# CONNESSIONE DB FORNITORI
-# Creazione e comunicazione con il database fornitori (con aggiunta di una corretta gestione degli errori alle query del database per rilevare eccezioni e impedire l'arresto anomalo dell'applicazione)
-def get_fornitori_db_connection():
-  try:
-    connection = sqlite3.connect("fornitori.db")
-    connection.row_factory = sqlite3.Row
-    return connection
-  except sqlite3.Error as e:
-    print(f"Fornitori database connection error: {e}")
-  return None
-
-
-# CONNESSIONE DB DDT
-def get_ddt_db_connection():
-    try:
-        connection = sqlite3.connect("ddt.db")
-        connection.row_factory = sqlite3.Row
-        return connection
-    except sqlite3.Error as e:
-        print(f"DDT database connection error: {e}")
-        return None
-
-
-# INIZIALIZZAZIONE STRUTTURA DB FORNITORI
-# Crea la struttura dei database se non esiste
-def init_fornitori_db():
-    connection = get_fornitori_db_connection()
-    cursor = connection.cursor()
+# Gli script SQL per la CREAZIONE DELLE TABELLE sono stati creati in variabili separate per migliorare la leggibilità.
     # Tabella dei fornitori (file 'fornitori.db')
-    cursor.execute("""
+create_fornitori_table_sql = """
     CREATE TABLE IF NOT EXISTS fornitori (
         fornitore TEXT PRIMARY KEY
     )
-    """)
-    connection.commit()
-    connection.close()
+    """
 
-
-# INIZIALIZZAZIONE STRUTTURA DB RDA
-def init_db():
-    # Database RdA
-    connection = get_db_connection()
-    cursor = connection.cursor()
-
-    # Tabella example (file 'database.db')
-    cursor.execute("""
+    # Tabella RDA (file 'database-rda.db')
+create_example_table_sql = """
     CREATE TABLE IF NOT EXISTS example (
         id INTEGER PRIMARY KEY,
         rda INTEGER NOT NULL,
@@ -88,16 +53,10 @@ def init_db():
         data_creazione TEXT NOT NULL,
         tipologia_acquisto TEXT NOT NULL
     )
-    """)
-    connection.commit()
-    connection.close()
+    """
 
-
-# INIZIALIZZAZIONE DB DDT
-def init_ddt_db():
-    connection = get_ddt_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("""
+    # Tabella DDT (file 'ddt.db')
+create_ddt_table_sql = """
     CREATE TABLE IF NOT EXISTS ddt (
         id INTEGER PRIMARY KEY,
         costo_unitario TEXT NOT NULL,
@@ -110,27 +69,36 @@ def init_ddt_db():
         arrivato TEXT NOT NULL,
         data_arrivo_ordine TEXT NOT NULL
     )
-    """)
-    connection.commit()
-    connection.close()
+    """
+
+# INIZIALIZZAZIONE STRUTTURA DB:(RDA, FORNITORI, DDT)
+# Crea la struttura dei database se non esiste
+def init_db(db_name, create_table_sql):
+    connection = get_db_connection(db_name)
+    if connection:
+        try:
+            cursor = connection.cursor()
+            cursor.execute(create_table_sql)
+            connection.commit()
+        except sqlite3.Error as e:
+            print(f"Error initializing database: {e}")
+            # Gestisci l'errore (log, messaggio all'utente, ecc.)
+        finally:
+            connection.close() # La connessione al database viene chiusa nel blocco finally per garantire che venga chiusa anche in caso di errore.
 
 
+# Inizializzazione dei database
+init_db("fornitori.db", create_fornitori_table_sql)
+init_db("database-rda.db", create_example_table_sql)
+init_db("ddt.db", create_ddt_table_sql)
 
-# Database Fornitori
-init_fornitori_db()
-
-# Database RdA
-init_db()
-
-# Database DDT
-init_ddt_db()
 
 # # Controllare se il database è stato creato con successo. Se non presente alcun dato nel database il valore di ritorno è "0"
 # print(connection.total_changes)
 
 
 ############################################################################################################
-# CREAZIONE ENDPOINT
+# CREAZIONE ENDPOINT (PAGINE)
 ############################################################################################################
 
 # Home
@@ -190,7 +158,10 @@ def register():
 @login_required
 def index():
     return render_template('index.html')
-##########################################################
+
+############################################################################################################
+# CREAZIONE ENDPOINT (LOGICI)
+############################################################################################################
 
 # Insert RdA
 @app.route('/insert_rdas', methods=['GET', 'POST'])
@@ -218,7 +189,7 @@ def insert_rda():
             if new_fornitore:
                 fornitore = new_fornitore
                 # Inserisci il nuovo fornitore nel database fornitori
-                connection = get_fornitori_db_connection()
+                connection = get_db_connection("fornitori.db")
                 if connection:
                     cursor = connection.cursor()
                     cursor.execute("INSERT OR IGNORE INTO fornitori (fornitore) VALUES (?)", (new_fornitore,))
@@ -230,7 +201,7 @@ def insert_rda():
 
     
             # Inserisci i dati nel database RdA
-            connection = get_db_connection()
+            connection = get_db_connection("database-rda.db")
             if connection:
                 cursor = connection.cursor()
                 cursor.execute("""
@@ -243,7 +214,7 @@ def insert_rda():
             success = True
     
         # Recupera l'elenco dei fornitori dal database fornitori.db
-        connection = get_fornitori_db_connection()
+        connection = get_db_connection("fornitori.db")
         if connection:
             cursor = connection.cursor()
             cursor.execute("SELECT fornitore FROM fornitori")
@@ -269,6 +240,16 @@ def insert_rda():
 def insert_ddt():
     success = False  # Inizializza il flag di successo a False
     fornitori = []  # Inizializza la lista dei fornitori
+    # Recupera l'elenco dei fornitori dal database fornitori.db PRIMA di processare la richiesta POST
+    connection = get_db_connection("fornitori.db")
+    if connection:
+        cursor = connection.cursor()
+        cursor.execute("SELECT fornitore FROM fornitori")
+        fornitori = [row['fornitore'] for row in cursor.fetchall()]
+        connection.close()
+    else:
+        flash("Error retrieving suppliers.", 'danger')
+        fornitori = []  # Inizializza fornitori come lista vuota in caso di errore
     try:
         if request.method == 'POST':
             costo_unitario = request.form['costo_unitario']
@@ -286,7 +267,7 @@ def insert_ddt():
             if new_fornitore:
                 fornitore = new_fornitore
                 # Inserisci il nuovo fornitore nel database fornitori
-                connection = get_fornitori_db_connection()
+                connection = get_db_connection("fornitori.db")
                 if connection:
                     cursor = connection.cursor()
                     cursor.execute("INSERT OR IGNORE INTO fornitori (fornitore) VALUES (?)", (new_fornitore,))
@@ -296,7 +277,7 @@ def insert_ddt():
                     flash("Database connection error.", 'danger')
                     return render_template('insert_ddt.html', fornitori=[], success=False)
             # Inserisci i dati nel database DDT
-            connection = get_ddt_db_connection()
+            connection = get_db_connection("ddt.db")
             if connection:
                 cursor = connection.cursor()
                 cursor.execute("""
@@ -304,24 +285,12 @@ def insert_ddt():
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (costo_unitario, quantita, ubicazione, descrizione, ddt, data_ordine, fornitore, arrivato, data_arrivo_ordine))
                 connection.commit()
-                success = True  # Imposta il flag di successo a True se l'inserimento ha avuto successo
-
-                # Recupera l'elenco dei fornitori dal database fornitori.db
-                connection = get_fornitori_db_connection()
-                if connection:
-                    cursor = connection.cursor()
-                    cursor.execute("SELECT fornitore FROM fornitori")
-                    fornitori = [row['fornitore'] for row in cursor.fetchall()]
-                    connection.close()  # Chiudi la connessione DOPO aver recuperato i fornitori
-                else:
-                    flash("Error retrieving suppliers.", 'danger')
-                    # fornitori is already initialized to an empty list                    
+                success = True  # Imposta il flag di successo a True se l'inserimento ha avuto successo               
     except sqlite3.Error as e:
         if connection:
             connection.rollback()
         print(f"Database error: {e}")
         flash("A database error occurred. Please try again.", 'danger')
-        # fornitori is already initialized to an empty list 
 
     return render_template('insert_ddt.html', fornitori=fornitori, success=success)
 ##########################################################
@@ -331,7 +300,7 @@ def insert_ddt():
 @app.route('/show_ddts')
 @login_required
 def show_ddts():
-    connection = get_ddt_db_connection()
+    connection = get_db_connection("ddt.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM ddt")
     ddts = cursor.fetchall()
@@ -366,7 +335,7 @@ def show_ddts():
 @app.route('/show_rdas')
 @login_required
 def show_rdas():
-    connection = get_db_connection()
+    connection = get_db_connection("database-rda.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM example")
     rdas = cursor.fetchall()
@@ -398,7 +367,7 @@ def show_rdas():
 @app.route('/show_fornitori')
 @login_required
 def show_fornitori():
-    connection = get_fornitori_db_connection()
+    connection = get_db_connection("fornitori.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM fornitori")
     fornitori = cursor.fetchall()
@@ -409,7 +378,6 @@ def show_fornitori():
 
     for fornitore in fornitori:
         print(fornitore)
-        print(fornitore['id'])
 
     connection.close()
     return render_template('fornitori.html', fornitori=fornitori)
@@ -424,7 +392,7 @@ def add_ddt():
     new_ddt = data.get('ddt')
 
     if new_ddt:
-        connection = get_ddt_db_connection()
+        connection = get_db_connection("ddt.db")
         cursor = connection.cursor()
         cursor.execute("INSERT OR IGNORE INTO ddt (fornitore) VALUES (?)", (new_ddt,))
         connection.commit()
@@ -442,7 +410,7 @@ def add_fornitore():
     new_fornitore = data.get('fornitore')
 
     if new_fornitore:
-        connection = get_fornitori_db_connection()
+        connection = get_db_connection("fornitori.db")
         cursor = connection.cursor()
         cursor.execute("INSERT OR IGNORE INTO fornitori (fornitore) VALUES (?)", (new_fornitore,))
         connection.commit()
@@ -456,7 +424,7 @@ def add_fornitore():
 # Restituire elenco fornitori
 @app.route('/get_fornitori', methods=['GET'])
 def get_fornitori():
-    connection = get_fornitori_db_connection()
+    connection = get_db_connection("fornitori.db")
     cursor = connection.cursor()
     cursor.execute("SELECT fornitore FROM fornitori")
     fornitori = [row['fornitore'] for row in cursor.fetchall()]
@@ -478,7 +446,7 @@ def search_document():
     doc_type = data['doc_type']
     doc_value = data['doc_value']
 
-    connection = get_db_connection()
+    connection = get_db_connection("database-rda.db")
     if connection is None:
         return jsonify({"error": "Database connection error"}), 500
     
@@ -514,7 +482,7 @@ def modify_document():
     doc_id = data['id']
     updated_fields = data['updated_fields']
 
-    connection = get_db_connection()
+    connection = get_db_connection("database-rda.db")
     if connection is None:
         return jsonify({"error": "Database connection error"}), 500
 
@@ -543,7 +511,7 @@ def modify_document():
 # Assicurati che la tabella example nel tuo database SQLite abbia effettivamente le colonne che stai cercando di aggiornare. Puoi farlo eseguendo una query per visualizzare la struttura della tabella
 @app.route('/check_table_structure')
 def check_table_structure():
-    connection = get_db_connection()
+    connection = get_db_connection("database-rda.db")
     cursor = connection.cursor()
     cursor.execute("PRAGMA table_info(example)")
     columns = cursor.fetchall()
@@ -558,7 +526,7 @@ def delete_document():
     data = request.get_json()
     doc_id = data['id']
 
-    connection = get_db_connection()
+    connection = get_db_connection("database-rda.db")
     cursor = connection.cursor()
 
     try:
@@ -584,7 +552,7 @@ def search():
         search_value = request.form['search_value']
 
         if search_field and search_value:
-            connection = get_db_connection()
+            connection = get_db_connection("database-rda.db")
             cursor = connection.cursor()
 
             # Dynamically construct the SQL query
@@ -607,7 +575,7 @@ def search_ddt():
         search_value = request.form['search_value']
 
         if search_field and search_value:
-            connection = get_ddt_db_connection()
+            connection = get_db_connection("ddt.db")
             cursor = connection.cursor()
 
             # Dynamically construct the SQL query
@@ -631,7 +599,7 @@ def search_results():
     if not search_field or not search_value:
         return jsonify({"error": "Please select a search field and enter a value."}), 400 
 
-    connection = get_db_connection()
+    connection = get_db_connection("database-rda.db")
     if connection is None:
         return jsonify({"error": "Database connection error"}), 500
 
@@ -658,7 +626,7 @@ def search_results_ddt():
     if not search_field or not search_value:
         return jsonify({"error": "Please select a search field and enter a value."}), 400
 
-    connection = get_ddt_db_connection()
+    connection = get_db_connection("ddt.db")
     if connection is None:
         return jsonify({"error": "Database connection error"}), 500
 
